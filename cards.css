@@ -1,0 +1,47 @@
+.playingCards .card {
+    display: inline-block;
+    width: 3.3em;
+    height: 4.6em;
+    border: 1px solid #666;
+    /* border-radius does not work on older browsers */
+    border-radius: .3em;   
+    padding: .25em;
+    margin: 0 .5em .5em 0;
+    text-align: center;
+    font-size: 1.2em; /* @change: adjust this value to make bigger or smaller cards */
+    font-weight: normal;
+    font-family: Arial, sans-serif;
+    position: relative;
+    background-color: #fff;
+    /* box-shadow does not work on older browsers */
+    box-shadow: .2em .2em .5em #333;
+}
+
+.playingCards .diams,.hearts{
+    color: #f00;
+}
+
+.playingCards .card.rank-a.diams:after{
+    content: "\2666";
+}
+.playingCards .card.rank-2.diams:after{
+    content: "\2666 \A\A\2666";
+}
+.playingCards .card.rank-3.diams:after{
+    content: "\2666 \A\2666 \A\2666";
+}
+.playingCards .card.rank-4.diams:after{
+    content: "\2666\00A0\00A0\00A0\2666 \A\A\2666\00A0\00A0\00A0\2666";
+}
+
+.playingCards .card.rank-a.hearts:after{
+    content: "\2665";
+}
+
+.playingCards .card.rank-a.spades:after{
+    content: "\2660";
+}
+
+.playingCards .card.rank-a.clubs:after{
+    content: "\2663";
+}
