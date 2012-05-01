@@ -1,0 +1,67 @@
+#deck
+{
+    margin: 0 auto;
+    width: 100%;
+    background: #444;
+}
+
+#header
+{
+    padding-left: 40%;
+    -webkit-transform: rotate(180deg);
+}
+
+
+#footer
+{
+    padding-left: 40%;    
+}
+
+#shuffle {
+    background-color:transparent;	
+    /*border-radius:8px;
+    border:1px solid;*/
+    display:inline-block;
+    font-family:Verdana;
+    /*color:#444;*/
+    font-size:24px;
+    font-weight:bold;
+    /*padding:6px 24px;*/
+    /*text-decoration:none;*/	
+}
+
+.board .player1,
+.board .player4 {
+    padding-left: 45%;
+}
+
+.board .player2{
+    float:left;
+    padding-left: 40%;
+}
+
+
+#content .left,
+#content .right
+{    
+    padding-top:10%;
+    float:left;
+    width:20%;    
+}
+
+#content .left
+{
+    -webkit-transform: rotate(90deg);    
+}
+
+#content .right
+{           
+    -webkit-transform: rotate(-90deg);    
+}
+
+#content .mid
+{
+    float:left;
+    width:60%;    
+}
+
