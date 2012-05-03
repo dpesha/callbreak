@@ -1,0 +1,32 @@
+script(type='text/javascript', src='http://code.jquery.com/jquery-1.7.1.js')
+h1= title
+p Welcome to #{title}
+a#play(href='#') Play Now!
+br
+#message
+    span share url below with other 3 friends to play call break online
+    br
+    a#playroom
+script(type='text/javascript')
+    var hosturl = window.location.href.split('#');
+    $(document).ready(function() {
+        $('#message').hide();
+        $('#play').bind('click',function(){
+            var playurl='play/'+makeid();
+            $('#playroom').attr('href',playurl).html(hosturl[0]+playurl);
+            $('#message').show();
+        });
+    
+    });
+    
+    function makeid()
+    {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    
+        for( var i=0; i < 5; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+    
+        return text;
+    }
+    

@@ -1,8 +1,9 @@
 #deck
 {
     margin: 0 auto;
-    width: 100%;
+    width: 80%;
     background: #444;
+    float:left;
 }
 
 #header
@@ -17,6 +18,34 @@
     padding-left: 40%;    
 }
 
+#commands {
+    clear:both;
+}
+
+#messages {
+    float:left;
+    width:200px;
+    height:330px;
+    background:#f9f9f9;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    word-wrap: break-word;
+}
+
+#messagebox {
+    width:200px;
+    height:320px;
+}
+
+#messageText {
+    width:190px;
+}
+
+table {
+   
+}
+
+
 #shuffle {
     background-color:transparent;	
     /*border-radius:8px;
@@ -29,6 +58,7 @@
     /*padding:6px 24px;*/
     /*text-decoration:none;*/	
 }
+
 
 .board .player1,
 .board .player4 {

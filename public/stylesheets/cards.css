@@ -18,7 +18,7 @@
 }
 
 .playingCards a.card {
-    text-decoration: none;
+    text-decoration: none;    
 }
 /* selected and hover state */
 .playingCards a.card:hover, .playingCards a.card:active, .playingCards a.card:focus,
@@ -141,13 +141,13 @@
     content: "\2666\00A0\2666\00A0\2666 \A\2666\00A0\2666\00A0\2666\00A0\2666 \A\2666\00A0\2666\00A0\2666";
 }
 .playingCards.faceImages .card.rank-j.diams {
-    background-image: url(faces/JD.gif); 
+    background-image: url(/images/JD.gif); 
 }
 .playingCards.faceImages .card.rank-q.diams {
-    background-image: url(faces/QD.gif); 
+    background-image: url(/images/QD.gif); 
 }
 .playingCards.faceImages .card.rank-k.diams {
-    background-image: url(faces/KD.gif); 
+    background-image: url(/images/KD.gif); 
 }
 
 /* hearts */
@@ -179,13 +179,13 @@
     content: "\2665\00A0\2665\00A0\2665 \A\2665\00A0\2665\00A0\2665\00A0\2665 \A\2665\00A0\2665\00A0\2665";
 }
 .playingCards.faceImages .card.rank-j.hearts {
-    background-image: url(faces/JH.gif); 
+    background-image: url(/images/JH.gif); 
 }
 .playingCards.faceImages .card.rank-q.hearts {
-    background-image: url(faces/QH.gif); 
+    background-image: url(/images/QH.gif); 
 }
 .playingCards.faceImages .card.rank-k.hearts {
-    background-image: url(faces/KH.gif); 
+    background-image: url(/images/KH.gif); 
 }
 
 /* spades */
@@ -218,13 +218,13 @@
     content: "\2660\00A0\2660\00A0\2660 \A\2660\00A0\2660\00A0\2660\00A0\2660 \A\2660\00A0\2660\00A0\2660";
 }
 .playingCards.faceImages .card.rank-j.spades {
-    background-image: url(faces/JS.gif); 
+    background-image: url(/images/JS.gif); 
 }
 .playingCards.faceImages .card.rank-q.spades {
-    background-image: url(faces/QS.gif); 
+    background-image: url(/images/QS.gif); 
 }
 .playingCards.faceImages .card.rank-k.spades {
-    background-image: url(faces/KS.gif); 
+    background-image: url(/images/KS.gif); 
 }
 
 /* clubs */
@@ -256,13 +256,13 @@
     content: "\2663\00A0\2663\00A0\2663 \A\2663\00A0\2663\00A0\2663\00A0\2663 \A\2663\00A0\2663\00A0\2663";
 }
 .playingCards.faceImages .card.rank-j.clubs {
-    background-image: url(faces/JC.gif); 
+    background-image: url(/images/JC.gif); 
 }
 .playingCards.faceImages .card.rank-q.clubs {
-    background-image: url(faces/QC.gif); 
+    background-image: url(/images/QC.gif); 
 }
 .playingCards.faceImages .card.rank-k.clubs {
-    background-image: url(faces/KC.gif); 
+    background-image: url(/images/KC.gif); 
 }
 
 /*____________ symbols in the middle (faces as images) ____________*/
