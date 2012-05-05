@@ -24,49 +24,7 @@ var Message= {
 };
 
 var Deck = new function(){  
-    
-    this.shuffle=function(){
-        
-        this.cards=[];
-        // get the cards on deck
-        this.cardElements=$('ul.hand > li');
-        this.cardElements.show();
-        
-        for (var i = 0; i < this.cardElements.size(); i++) {
-            this.cards.push(this.cardElements.eq(i).children('a').prop('class'));
-        } 
-        
-        // shuffle the cards logically;
-        var tmp, current, top = this.cards.length;
-           
-        if(top) while(--top) {
-            current = Math.floor(Math.random() * (top + 1));
-            tmp = this.cards[current];
-            this.cards[current] = this.cards[top];
-            this.cards[top] = tmp;
-        }
-        
-        // shuffle the cards on UI
-        for(var i = 0; i < this.cardElements.size(); i++){
-            
-           var cardElement=this.cardElements.eq(i).children('a');
-           cardElement.removeClass();
-           cardElement.addClass(this.cards[i]);
-           var cardCSS=this.cards[i].split(' ');
-           cardElement.children('span.rank').html(cardCSS[1].split('-')[1].toUpperCase());
-           cardElement.children('span.suit').html('&'+cardCSS[2]+';');
-           
-        }
-        
-        // clear the board
-        var cardOnBoard=$('div.[class^="player"]').children('div');
-        cardOnBoard.removeClass();
-        cardOnBoard.addClass('card');
-        cardOnBoard.children('span.rank').html('');
-        cardOnBoard.children('span.suit').html('');
-        
-    }
-    
+      
     this.turn=function(card){
              
        var player=card.parent().parent().prop('id');
@@ -100,19 +58,39 @@ var Server={
                 $('#messages').prepend(parsed.message);
                 $('#messages').prepend("<hr>");
                 break;
-            case 'newuser':
-                usersList.push(parsed.message);
-                for (var i = 0; i < usersList.length; i++) {
-                    $('#pointtable > table > tbody> tr > th').eq(i).text(parsed.message);
-                }                
-                break;
-            case 'leaveuser':
-                alert("leave");
-                for (var i = 0; i < usersList.length; i++) {
-                    if(usersList[i]==parsed.message){
-                        usersList.splice(i,1);
+            case 'userupdate':
+                var tableHeader=$('#pointtable > table > tbody> tr > th');
+                var usersList=parsed.message.slice(0);
+                
+                /* Rotate table*/
+                for(var i=0 ;i<parsed.message.length;i++){
+                    if(parsed.message[i]==User.getUserid()){
+                        usersList.rotate(i);
+                        break;
                     }
-                }                
+                }
+                
+                for (var j=0; j< tableHeader.size(); j++) {
+                    for (var i = 0; i < parsed.message.length; i++) {
+                        tableHeader.eq(i).text(parsed.message[i]);
+                        $('#player'+(i+1)).text(usersList[i]);
+                    }
+                }
+                break;
+            case 'carddistribute':
+                for(var i=0;i<13;i++){
+                    var cardCss=parsed.message[i].split(' ');
+                    var rank=cardCss[0].split('-')[1].toUpperCase()
+                    var suit='&'+cardCss[1]+';'
+                    $('#right > ul.hand,#top > ul.hand,#left > ul.hand ').append('<li><div class="card back">*</div></li>');
+                    $('#bottom > ul.hand').append('<li><a class="card '+parsed.message[i]+'" href="#"><span class="rank">'+rank+'</span><span class="suit">'+suit+'</span></a></li>');
+                }
+                $('#right,#left').css('padding-top','12%');
+                $('#mid > #round > #roundtable').remove();
+                $('#mid > #round').append('<div id="roundtable"><div class="player3"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
+                                       <div><div class="player4"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
+                                       <div class="player2"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>\
+                                       <div class="player1"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>');
                 break;
         }        
     });
@@ -147,17 +125,29 @@ var Server={
 };
 */
 
+
+
 $(document).ready(function() {
     
-    var server=Server.connect();
-    Deck.shuffle();
-    // bind the shuffle click
+    /* Rotate Array */
+    Array.prototype.rotate = function( n ) {
+      this.unshift.apply( this, this.splice( n, this.length ) )
+      return this;
+    }
+    
+    var server=Server.connect();  
+    // shuffle cards
     $('#shuffle').bind('click',function(){
-       Deck.shuffle();        
+       server.emit('shuffle','shuffle the cards');        
+    });
+    
+    // distribute cards
+    $('#distribute').bind('click',function(){
+       server.emit('distribute','distribute the cards');        
     });
     
     $('a.card').bind('click',function(){
-        Deck.turn($(this));        
+        
     });
     
     $('#messageText').keypress(function(event) {

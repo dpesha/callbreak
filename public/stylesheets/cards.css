@@ -380,6 +380,7 @@
     bottom: 0;
 }
 
+/* hand */
 .playingCards ul.hand li:nth-child(1)  { left: 0; }
 .playingCards ul.hand li:nth-child(2)  { left: 1.1em; }
 .playingCards ul.hand li:nth-child(3)  { left: 2.2em; }
@@ -393,3 +394,18 @@
 .playingCards ul.hand li:nth-child(11) { left: 11.6em; }
 .playingCards ul.hand li:nth-child(12) { left: 12.6em; }
 .playingCards ul.hand li:nth-child(13) { left: 13.9em; }
+
+/* deck */
+.playingCards ul.deck li:nth-child(1)  { left: 0;    bottom: 0; }
+.playingCards ul.deck li:nth-child(2)  { left: 2px;  bottom: 1px; }
+.playingCards ul.deck li:nth-child(3)  { left: 4px;  bottom: 2px; }
+.playingCards ul.deck li:nth-child(4)  { left: 6px;  bottom: 3px; }
+.playingCards ul.deck li:nth-child(5)  { left: 8px;  bottom: 4px; }
+.playingCards ul.deck li:nth-child(6)  { left: 10px; bottom: 5px; }
+.playingCards ul.deck li:nth-child(7)  { left: 12px; bottom: 6px; }
+.playingCards ul.deck li:nth-child(8)  { left: 14px; bottom: 7px; }
+.playingCards ul.deck li:nth-child(9)  { left: 16px; bottom: 8px; }
+.playingCards ul.deck li:nth-child(10) { left: 18px; bottom: 9px; }
+.playingCards ul.deck li:nth-child(11) { left: 20px; bottom: 10px; }
+.playingCards ul.deck li:nth-child(12) { left: 22px; bottom: 11px; }
+.playingCards ul.deck li:nth-child(13) { left: 24px; bottom: 12px; }

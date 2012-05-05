@@ -37,11 +37,10 @@ app.get('/error', routes.error);
 
 var port = process.env.PORT || 3000;
 var sessions =[];
-var usersList=[];
 
 /* implementing websocket with socket.io*/
 var io = require('socket.io').listen(app);
-
+//io.set('log level' ,1);
 /***** capture session information *****/
 var parseCookie = require('connect').utils.parseCookie;
 io.set('authorization', function (data, accept) {
@@ -61,7 +60,8 @@ io.set('authorization', function (data, accept) {
               // TODO: Redirect to other page when player quota is over
               if(SessionManager.getSessionCount(data.session.sessionid)==4){
                 accept('Player Quota Reached!', false);
-              }              
+              }
+              
               accept(null, true);                
             }
         });
@@ -72,36 +72,52 @@ io.set('authorization', function (data, accept) {
 
 io.sockets.on('connection', function (socket) {
   var sessionId=socket.handshake.session.sessionid;
-  console.log("New Session");
-  console.log("Session Identifier: " + sessionId);
-    
-  var user ={
+  console.log("New Session Established:" + sessionId);
+      
+  var session ={
     userid:'',    
     sessionid:sessionId,
     ws:socket
   } 
   
   socket.on('newuser',function(username){
-    user.userid=username;
-    sessions.push(user);    
-    SessionManager.sendMessage(sessionId,Message.createMessage('chat',user.userid + ' just joined in.'));
-    SessionManager.sendMessage(sessionId,Message.createMessage('newuser',user.userid));
-  }); 
+    session.userid=username;
+    sessions.push(session);    
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',username + ' just joined in.'));
+    SessionManager.sendMessage(sessionId,Message.createMessage('userupdate',SessionManager.getUsersList(sessionId)));
+  });
+  
+  socket.on('shuffle',function(message){
+    Cards.shuffle();
+    console.log(Cards.cards);
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat','Shuffled Cards!'));    
+  });
+  
+  socket.on('distribute',function(message){
+   
+   SessionManager.sendMessage(sessionId,Message.createMessage('chat','Distributed Cards!'));
+   var sessionsList=SessionManager.getSessions(sessionId);   
+   for(var i=0;i<sessionsList.length;i++){
+           sessionsList[i].ws.send(Message.createMessage('carddistribute',Cards.distribute()[i]));
+        
+   }
     
+  });
+  
   socket.on('message', function (message) {
     console.log('received: %s', message);
     SessionManager.sendMessage(sessionId,message);    	
   });  
   
   socket.on('disconnect', function () {
-    console.log("session has been disconnected!");
+    console.log("Session Disconnected:" + sessionId + ',User:' + session.userid);
     for (var i = 0; i < sessions.length; i++) {
       if(sessions[i].ws==socket){
-              sessions.splice(i,1);
-      }
-    }
-    SessionManager.sendMessage(sessionId,Message.createMessage('chat',user.userid + ' left the room'));
-    SessionManager.sendMessage(sessionId,Message.createMessage('userleave',user.userid));
+              sessions.splice(i,1);              
+      }      
+    }   
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',session.userid + ' left the room'));
+    SessionManager.sendMessage(sessionId,Message.createMessage('userupdate',SessionManager.getUsersList(sessionId)));
   });
 });
 
@@ -125,13 +141,15 @@ app.listen(port, function(){
 			}
 		});
 		
-	});*/
-
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+	});*/  
+  console.log("Server listening on port %d in %s mode", app.address().port, app.settings.env);
+  Cards.init();
+  
 });
 
 /*** Session Manager ***/
 var SessionManager=new function(){
+  
   
   this.sendMessage=function(sessionId,message){    
     for (var i = 0; i < sessions.length; i++) {
@@ -139,7 +157,7 @@ var SessionManager=new function(){
            sessions[i].ws.send(message);
       }
     }	
-  }
+  } 
   
   this.getSessionCount=function(sessionId){
     var count=0;
@@ -149,7 +167,128 @@ var SessionManager=new function(){
         }
     }
     return count;
-  }  
+  }
+  
+  this.getSessions=function(sessionId){
+    var sessionList=[];
+    for (var i = 0; i < sessions.length; i++) {
+      if(sessions[i].sessionid==sessionId){
+           sessionList.push(sessions[i]); 
+        }
+    }
+    return sessionList;
+  }
+  
+  this.getUsersList=function(sessionId){
+    var usersList=['PL1','PL2','PL3','PL4'];
+    var match=0;
+    for (var i = 0; i < sessions.length; i++) {
+      if(sessions[i].sessionid==sessionId){
+        usersList[match]=sessions[i].userid;
+        match++;
+      }
+    }  
+        
+    return usersList;
+  }
+}
+
+var Cards = new function(){
+  
+  this.cards=[];
+  this.init=function(){
+    // initalize cards
+    this.cards.push('rank-a diams');
+    this.cards.push('rank-2 diams');
+    this.cards.push('rank-3 diams');
+    this.cards.push('rank-4 diams');
+    this.cards.push('rank-5 diams');
+    this.cards.push('rank-6 diams');
+    this.cards.push('rank-7 diams');
+    this.cards.push('rank-8 diams');
+    this.cards.push('rank-9 diams');
+    this.cards.push('rank-10 diams');
+    this.cards.push('rank-j diams');
+    this.cards.push('rank-q diams');
+    this.cards.push('rank-k diams');
+    this.cards.push('rank-a spades');
+    this.cards.push('rank-2 spades');
+    this.cards.push('rank-3 spades');
+    this.cards.push('rank-4 spades');
+    this.cards.push('rank-5 spades');
+    this.cards.push('rank-6 spades');
+    this.cards.push('rank-7 spades');
+    this.cards.push('rank-8 spades');
+    this.cards.push('rank-9 spades');
+    this.cards.push('rank-10 spades');
+    this.cards.push('rank-j spades');
+    this.cards.push('rank-q spades');
+    this.cards.push('rank-k spades');
+    this.cards.push('rank-a clubs');
+    this.cards.push('rank-2 clubs');
+    this.cards.push('rank-3 clubs');
+    this.cards.push('rank-4 clubs');
+    this.cards.push('rank-5 clubs');
+    this.cards.push('rank-6 clubs');
+    this.cards.push('rank-7 clubs');
+    this.cards.push('rank-8 clubs');
+    this.cards.push('rank-9 clubs');
+    this.cards.push('rank-10 clubs');
+    this.cards.push('rank-j clubs');
+    this.cards.push('rank-q clubs');
+    this.cards.push('rank-k clubs');
+    this.cards.push('rank-a hearts');
+    this.cards.push('rank-2 hearts');
+    this.cards.push('rank-3 hearts');
+    this.cards.push('rank-4 hearts');
+    this.cards.push('rank-5 hearts');
+    this.cards.push('rank-6 hearts');
+    this.cards.push('rank-7 hearts');
+    this.cards.push('rank-8 hearts');
+    this.cards.push('rank-9 hearts');
+    this.cards.push('rank-10 hearts');
+    this.cards.push('rank-j hearts');
+    this.cards.push('rank-q hearts');
+    this.cards.push('rank-k hearts');
+    // shuffle cards
+    this.shuffle();   
+  }
+  
+  
+  // shuffle the cards logically;
+  this.shuffle=function(){
+    
+    var tmp, current, top = this.cards.length;
+       
+    if(top) while(--top) {
+        current = Math.floor(Math.random() * (top + 1));
+        tmp = this.cards[current];
+        this.cards[current] = this.cards[top];
+        this.cards[top] = tmp;
+    }
+    //return this.cards;
+  }
+  
+  // distribute the cards logically;
+  this.distribute=function(){
+    var player1 =[];
+    var player2 =[];
+    var player3 =[];
+    var player4 =[];    
+    var distributedCards=[];
+    
+    for(var i=0;i<52;i=i+4){
+      player1.push(this.cards[i]);
+      player2.push(this.cards[i+1]);
+      player3.push(this.cards[i+2]);
+      player4.push(this.cards[i+3]);
+    }    
+    distributedCards.push(player1);
+    distributedCards.push(player2);
+    distributedCards.push(player3);
+    distributedCards.push(player4);
+    return distributedCards;
+  }
 }
 
 var Message= {

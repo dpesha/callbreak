@@ -7,297 +7,109 @@ html
     script(type='text/javascript', src='/javascripts/cards.js')
     script(type='text/javascript', src='/socket.io/socket.io.js')
   body
-    #board
-      #deck.playingCards.faceImages
-        #header
-          ul#player1.hand
-            li
-              a.card.rank-a.diams(href='#')
-                span.rank A
-                span.suit &diams;
-            li
-              a.card.rank-2.diams(href='#')
-                span.rank 2
-                span.suit &diams;
-            li
-              a.card.rank-3.diams(href='#')
-                span.rank 3
-                span.suit &diams;
-            li
-              a.card.rank-4.diams(href='#')
-                span.rank 4
-                span.suit &diams;
-            li
-              a.card.rank-5.diams(href='#')
-                span.rank 5
-                span.suit &diams;
-            li
-              a.card.rank-6.diams(href='#')
-                span.rank 6
-                span.suit &diams;
-            li
-              a.card.rank-7.diams(href='#')
-                span.rank 7
-                span.suit &diams;
-            li
-              a.card.rank-8.diams(href='#')
-                span.rank 8
-                span.suit &diams;
-            li
-              a.card.rank-9.diams(href='#')
-                span.rank 9
-                span.suit &diams;
-            li
-              a.card.rank-10.diams(href='#')
-                span.rank 10
-                span.suit &diams;
-            li
-              a.card.rank-j.diams(href='#')
-                span.rank J
-                span.suit &diams;
-            li
-              a.card.rank-q.diams(href='#')
-                span.rank Q
-                span.suit &diams;
-            li
-              a.card.rank-k.diams(href='#')
-                span.rank K
-                span.suit &diams;
-        #content
-          .left
-            ul#player2.hand
-              li
-                a.card.rank-a.spades(href='#')
-                  span.rank A
-                  span.suit &spades;
-              li
-                a.card.rank-2.spades(href='#')
-                  span.rank 2
-                  span.suit &spades;
-              li
-                a.card.rank-3.spades(href='#')
-                  span.rank 3
-                  span.suit &spades;
-              li
-                a.card.rank-4.spades(href='#')
-                  span.rank 4
-                  span.suit &spades;
-              li
-                a.card.rank-5.spades(href='#')
-                  span.rank 5
-                  span.suit &spades;
-              li
-                a.card.rank-6.spades(href='#')
-                  span.rank 6
-                  span.suit &spades;
-              li
-                a.card.rank-7.spades(href='#')
-                  span.rank 7
-                  span.suit &spades;
-              li
-                a.card.rank-8.spades(href='#')
-                  span.rank 8
-                  span.suit &spades;
-              li
-                a.card.rank-9.spades(href='#')
-                  span.rank 9
-                  span.suit &spades;
-              li
-                a.card.rank-10.spades(href='#')
-                  span.rank 10
-                  span.suit &spades;
-              li
-                a.card.rank-j.spades(href='#')
-                  span.rank J
-                  span.suit &spades;
-              li
-                a.card.rank-q.spades(href='#')
-                  span.rank Q
-                  span.suit &spades;
-              li
-                a.card.rank-k.spades(href='#')
-                  span.rank K
-                  span.suit &spades;
-          .mid
-            .board
-              .player1
-                .card
-                  span.rank
-                  span.suit
-              .middle
-                .player2
-                  .card
-                    span.rank
-                    span.suit
-                .player3
-                  .card
-                    span.rank
-                    span.suit
-              .player4
-                .card
-                  span.rank
-                  span.suit
-          .right
-            ul#player3.hand
-              li
-                a.card.rank-a.clubs(href='#')
-                  span.rank A
-                  span.suit &clubs;
-              li
-                a.card.rank-2.clubs(href='#')
-                  span.rank 2
-                  span.suit &clubs;
-              li
-                a.card.rank-3.clubs(href='#')
-                  span.rank 3
-                  span.suit &clubs;
-              li
-                a.card.rank-4.clubs(href='#')
-                  span.rank 4
-                  span.suit &clubs;
-              li
-                a.card.rank-5.clubs(href='#')
-                  span.rank 5
-                  span.suit &clubs;
-              li
-                a.card.rank-6.clubs(href='#')
-                  span.rank 6
-                  span.suit &clubs;
-              li
-                a.card.rank-7.clubs(href='#')
-                  span.rank 7
-                  span.suit &clubs;
-              li
-                a.card.rank-8.clubs(href='#')
-                  span.rank 8
-                  span.suit &clubs;
-              li
-                a.card.rank-9.clubs(href='#')
-                  span.rank 9
-                  span.suit &clubs;
-              li
-                a.card.rank-10.clubs(href='#')
-                  span.rank 10
-                  span.suit &clubs;
-              li
-                a.card.rank-j.clubs(href='#')
-                  span.rank J
-                  span.suit &clubs;
-              li
-                a.card.rank-q.clubs(href='#')
-                  span.rank Q
-                  span.suit &clubs;
-              li
-                a.card.rank-k.clubs(href='#')
-                  span.rank K
-                  span.suit &clubs;
-        #footer
-          ul#player4.hand
-            li
-              a.card.rank-a.hearts(href='#')
-                span.rank A
-                span.suit &hearts;
-            li
-              a.card.rank-2.hearts(href='#')
-                span.rank 2
-                span.suit &hearts;
-            li
-              a.card.rank-3.hearts(href='#')
-                span.rank 3
-                span.suit &hearts;
-            li
-              a.card.rank-4.hearts(href='#')
-                span.rank 4
-                span.suit &hearts;
-            li
-              a.card.rank-5.hearts(href='#')
-                span.rank 5
-                span.suit &hearts;
-            li
-              a.card.rank-6.hearts(href='#')
-                span.rank 6
-                span.suit &hearts;
-            li
-              a.card.rank-7.hearts(href='#')
-                span.rank 7
-                span.suit &hearts;
-            li
-              a.card.rank-8.hearts(href='#')
-                span.rank 8
-                span.suit &hearts;
-            li
-              a.card.rank-9.hearts(href='#')
-                span.rank 9
-                span.suit &hearts;
-            li
-              a.card.rank-10.hearts(href='#')
-                span.rank 10
-                span.suit &hearts;
-            li
-              a.card.rank-j.hearts(href='#')
-                span.rank J
-                span.suit &hearts;
-            li
-              a.card.rank-q.hearts(href='#')
-                span.rank Q
-                span.suit &hearts;
-            li
-              a.card.rank-k.hearts(href='#')
-                span.rank K
-                span.suit &hearts;
-      #side
+    #header
+    #menu
+      a#newgame(href='#') New Game
+      a#shuffle(href='#') Shuffle
+      a#distribute(href='#') Distribute
+    #content
+      #col-left
+        #board.playingCards.faceImages
+          #left
+            ul.hand
+            #player4.name PL4
+          #center  
+            #top
+              ul.hand
+              #player3.name PL3
+            #mid
+              #round
+                ul#roundtable.deck
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *                
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *                  
+            #bottom
+              ul.hand
+              #player1.name PL1
+          #right
+            ul.hand
+            #player2.name PL2
+      #col-right
         #pointtable
-          table(contenteditable='true')
+          table
             tr
-              th user1
-              th user2
-              th user3
-              th user4
+              th PL1
+              th PL2
+              th PL3
+              th PL4
             tr
-              td 1
-              td 1
-              td 1
-              td 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
             tr
-              td 1
-              td 1
-              td 1
-              td 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
             tr
-              td 1
-              td 1
-              td 1
-              td 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
             tr
-              td 1
-              td 1
-              td 1
-              td 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
             tr
-              td
+              td(contenteditable='true')
                 b 4
-              td
+              td(contenteditable='true')
                 b 4
-              td
+              td(contenteditable='true')
                 b 4
-              td
+              td(contenteditable='true')
                 b 4
             tr
-              td 1
-              td 1
-              td 1
-              td 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
+              td(contenteditable='true') 1
             tr
-              td
+              td(contenteditable='true')
                 b 5
-              td
+              td(contenteditable='true')
                 b 5
-              td
+              td(contenteditable='true')
                 b 5
-              td
+              td(contenteditable='true')
                 b 5  
         #chatroom
           #messages            
-          input#messageText type=text        
-    #commands
-      a#shuffle(href='#') New Game
+          input#messageText type=text
+    #footer
+  

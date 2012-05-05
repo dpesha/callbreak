@@ -1,4 +1,28 @@
-#deck
+body{
+  margin:0 10px;
+  padding:0 10px 0 10px;
+  font-family:Verdana;
+  font-size:14px;
+}
+.name{
+    font-size:20px;
+    font-weight:bold;
+    color:#fff;
+}
+
+#newgame,#shuffle,#distribute {
+    background-color:#444;	
+    display:inline-block;
+    font-size:24px;
+    font-weight:bold;
+    border-radius:1px;
+    border:1px dashed;
+    color:#fff;
+    padding:6px 24px;
+    text-decoration:none;
+}
+
+#col-left
 {
     margin: 0 auto;
     width: 80%;
@@ -6,29 +30,16 @@
     float:left;
 }
 
-#header
+#col-right
 {
-    padding-left: 40%;
-    -webkit-transform: rotate(180deg);
-}
-
-
-#footer
-{
-    padding-left: 40%;    
-}
-
-#commands {
-    clear:both;
+   float:left; 
 }
 
 #messages {
-    float:left;
     width:200px;
-    height:330px;
+    height:320px;
     background:#f9f9f9;
-    overflow-y:scroll;
-    overflow-x:hidden;
+    overflow-y:scroll;   
     word-wrap: break-word;
 }
 
@@ -41,57 +52,66 @@
     width:190px;
 }
 
-table {
-   
+#board{
+  background-color:#444;
+  float:left;
+  width:100%;	
+  display:inline; /* So IE plays nice */
 }
 
-
-#shuffle {
-    background-color:transparent;	
-    /*border-radius:8px;
-    border:1px solid;*/
-    display:inline-block;
-    font-family:Verdana;
-    /*color:#444;*/
-    font-size:24px;
-    font-weight:bold;
-    /*padding:6px 24px;*/
-    /*text-decoration:none;*/	
+#left{
+  float:left;
+  width:200px;
+  position:relative;
+  /*padding-top:12%;*/
 }
 
-
-.board .player1,
-.board .player4 {
-    padding-left: 45%;
-}
-
-.board .player2{
-    float:left;
-    padding-left: 40%;
-}
-
-
-#content .left,
-#content .right
-{    
-    padding-top:10%;
-    float:left;
-    width:20%;    
-}
-
-#content .left
+#left ul,
+#right ul
 {
-    -webkit-transform: rotate(90deg);    
+    
+    -webkit-transform: rotate(90deg);
 }
 
-#content .right
-{           
-    -webkit-transform: rotate(-90deg);    
-}
-
-#content .mid
+#left div,
+#right div
 {
-    float:left;
-    width:60%;    
+    padding-left:25%;
+    padding-top:62%;
 }
 
+
+#center{
+  float:left;
+  width:100%;
+  margin-right:-100%;
+  padding-left:25%;  
+}
+
+#mid #round
+{
+    padding-bottom:3%;
+}
+
+#mid #round #roundtable
+{
+    padding-top:3%;
+}
+
+.player1,
+.player3
+{
+    padding-left:3%;
+}
+
+.player4
+{
+    float:left;    
+}
+
+#right{
+  float:right;
+  width:200px;
+  position:relative;
+  /*padding-top:12%;*/
+}
