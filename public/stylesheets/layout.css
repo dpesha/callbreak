@@ -1,16 +1,40 @@
 body{
   margin:0 10px;
   padding:0 10px 0 10px;
-  font-family:Verdana;
+  font-family:Verdana, sans-serif;
   font-size:14px;
 }
+
+table, td, th { 
+  border: 1px solid #CCC; 
+  border-collapse: collapse; 
+  }
+
+td, th { 
+  background-color: #FFF; 
+  width: 40px; 
+  height: 20px; 
+  text-align: center; 
+  vertical-align: middle;
+  font: 10px Verdana, sans-serif; 
+  }
+th {
+  background-color: #DDD;
+  font: bold 11px Verdana, sans-serif;
+  border-color: #BBB;
+  }
+
 .name{
     font-size:20px;
     font-weight:bold;
     color:#fff;
 }
 
-#newgame,#shuffle,#distribute {
+
+
+#newgame,
+#shuffle,
+#distribute {
     background-color:#444;	
     display:inline-block;
     font-size:24px;
@@ -38,14 +62,16 @@ body{
 #messages {
     width:200px;
     height:320px;
+    font-size:10px;
     background:#f9f9f9;
     overflow-y:scroll;   
     word-wrap: break-word;
 }
 
-#messagebox {
+#chatroom {
     width:200px;
     height:320px;
+    
 }
 
 #messageText {
@@ -59,22 +85,31 @@ body{
   display:inline; /* So IE plays nice */
 }
 
-#left{
+#player4{
   float:left;
   width:200px;
-  position:relative;
-  /*padding-top:12%;*/
+  position:relative;  
 }
 
-#left ul,
-#right ul
+#player1{
+  padding-top:10%;
+}
+
+#player2{
+  float:right;
+  width:200px;
+  position:relative;  
+}
+
+#player4 ul,
+#player2 ul
 {
-    
+   margin-top:21%;
     -webkit-transform: rotate(90deg);
 }
 
-#left div,
-#right div
+#player4 div,
+#player2 div
 {
     padding-left:25%;
     padding-top:62%;
@@ -83,7 +118,7 @@ body{
 
 #center{
   float:left;
-  width:100%;
+  /*width:100%;*/
   margin-right:-100%;
   padding-left:25%;  
 }
@@ -95,13 +130,23 @@ body{
 
 #mid #round #roundtable
 {
-    padding-top:3%;
+    padding-top:20%;
+}
+
+#roundtable
+{
+  width:200px;
 }
 
 .player1,
 .player3
 {
-    padding-left:3%;
+    padding-left:18%;
+}
+
+.player1
+{
+  clear:both;
 }
 
 .player4
@@ -109,9 +154,3 @@ body{
     float:left;    
 }
 
-#right{
-  float:right;
-  width:200px;
-  position:relative;
-  /*padding-top:12%;*/
-}

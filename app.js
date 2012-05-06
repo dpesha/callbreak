@@ -6,7 +6,7 @@ var express = require('express')
   , routes = require('./routes'); 
  // ,WebSocketServer=require('ws').Server;
 
-var app = module.exports = express.createServer();
+ var app = module.exports = express.createServer();
   // session setup
   var store=new express.session.MemoryStore;
   app.use(express.cookieParser());
@@ -87,20 +87,45 @@ io.sockets.on('connection', function (socket) {
     SessionManager.sendMessage(sessionId,Message.createMessage('userupdate',SessionManager.getUsersList(sessionId)));
   });
   
+  socket.on('newgame',function(message){    
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',message));    
+    SessionManager.sendMessage(sessionId,Message.createMessage('newgame',message));
+  });
+  
   socket.on('shuffle',function(message){
     Cards.shuffle();
-    console.log(Cards.cards);
-    SessionManager.sendMessage(sessionId,Message.createMessage('chat','Shuffled Cards!'));    
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',message));    
+    SessionManager.sendMessage(sessionId,Message.createMessage('cardshuffle',message));
   });
   
   socket.on('distribute',function(message){
    
-   SessionManager.sendMessage(sessionId,Message.createMessage('chat','Distributed Cards!'));
+   SessionManager.sendMessage(sessionId,Message.createMessage('chat',message));
    var sessionsList=SessionManager.getSessions(sessionId);   
    for(var i=0;i<sessionsList.length;i++){
            sessionsList[i].ws.send(Message.createMessage('carddistribute',Cards.distribute()[i]));
         
    }
+ });
+
+  socket.on('myturn',function(message){
+
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',message.user + ' threw a card.'));
+    SessionManager.sendMessage(sessionId,Message.createMessage('myturn',message));      
+    
+  });
+
+  socket.on('pointtableupdate',function(message){
+
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',message.user + ' updaed points'));
+    SessionManager.sendMessage(sessionId,Message.createMessage('pointtableupdate',message));      
+    
+  });
+
+  socket.on('cleartable',function(message){
+
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',message));
+    SessionManager.sendMessage(sessionId,Message.createMessage('cleartable',message));      
     
   });
   
@@ -116,7 +141,7 @@ io.sockets.on('connection', function (socket) {
               sessions.splice(i,1);              
       }      
     }   
-    SessionManager.sendMessage(sessionId,Message.createMessage('chat',session.userid + ' left the room'));
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',session.userid + ' left the room.'));
     SessionManager.sendMessage(sessionId,Message.createMessage('userupdate',SessionManager.getUsersList(sessionId)));
   });
 });
