@@ -1,4 +1,4 @@
-var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\:.*)(\/.*)/, '$1$2');
+var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\:.*)(\/.*)/, '$1$2:80');
 
 var User = new function(){
     this.userid='';
