@@ -27,7 +27,7 @@ var Message= {
 /*socket.io implementaiton*/
 var Server={       
     connect:function(){      
-    var socket = io.connect(ws_host);
+    var socket = new io.Socket('callbreak.nodester.com', {port: 80, rememberTransport: false}); 
     socket.on('connect', function () {
         var name;
         socket.emit('newuser', name=prompt("What's your name?"));
