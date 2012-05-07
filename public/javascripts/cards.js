@@ -26,8 +26,7 @@ var Message= {
 
 /*socket.io implementaiton*/
 var Server={       
-    connect:function(){ 
-      alert(ws_host);
+    connect:function(){      
     var socket = io.connect(ws_host);
     socket.on('connect', function () {
         var name;
