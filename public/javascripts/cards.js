@@ -1,4 +1,4 @@
-var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\:.*)(\/.*)/, '$1$2:80');
+var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, '$1$2');
 
 var User = new function(){
     this.userid='';
@@ -26,8 +26,9 @@ var Message= {
 
 /*socket.io implementaiton*/
 var Server={       
-    connect:function(){      
-    var socket = new io.Socket('callbreak.nodester.com', {port: 80, rememberTransport: false}); 
+    connect:function(){
+    alert(ws_host);        
+    var socket = io.connect(ws_host);
     socket.on('connect', function () {
         var name;
         socket.emit('newuser', name=prompt("What's your name?"));
