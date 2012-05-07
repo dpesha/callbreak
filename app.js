@@ -35,12 +35,12 @@ app.get('/', routes.index);
 app.get('/play/:id', routes.play);
 app.get('/error', routes.error);
 
-var port = process.env.PORT || 3000;
+var port = process.env['app_port'] || 3000;
 var sessions =[];
 
 /* implementing websocket with socket.io*/
 var io = require('socket.io').listen(app);
-//io.set('log level' ,1);
+io.set('log level' ,1);
 /***** capture session information *****/
 var parseCookie = require('connect').utils.parseCookie;
 io.set('authorization', function (data, accept) {

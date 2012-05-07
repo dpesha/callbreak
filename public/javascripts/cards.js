@@ -1,4 +1,4 @@
-var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, 'ws$2');
+var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\:.*)(\/.*)/, '$1$2:80');
 
 var User = new function(){
     this.userid='';
@@ -27,6 +27,7 @@ var Message= {
 /*socket.io implementaiton*/
 var Server={       
     connect:function(){ 
+      alert(ws_host);
     var socket = io.connect(ws_host);
     socket.on('connect', function () {
         var name;
