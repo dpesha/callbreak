@@ -62,6 +62,7 @@ var Server={
                 $('#shuffle').show();
                 $('#distribute').hide();
                 $('#board').html(Board.reloadOriginal());
+                $('td').html(0);
                 break;
             case 'cardshuffle':
                 $('#distribute').show(); 
