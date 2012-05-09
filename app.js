@@ -32,6 +32,7 @@ app.configure('production', function(){
 
 // Routes
 app.get('/', routes.index);
+app.get('/:message', routes.index);
 app.get('/play/:id', routes.play);
 app.get('/error', routes.error);
 
@@ -41,7 +42,8 @@ var sessions =[];
 /* implementing websocket with socket.io*/
 var io = require('socket.io').listen(app);
 io.set('log level' ,1);
-/***** capture session information *****/
+
+/***** extract session information *****/
 var parseCookie = require('connect').utils.parseCookie;
 io.set('authorization', function (data, accept) {
     if (data.headers.cookie) {
@@ -56,8 +58,8 @@ io.set('authorization', function (data, accept) {
                 // save the session data and accept the connection
                 data.session = session;
                 
-              /*** check player quota (max 4 players on one session)**/
-              // TODO: Redirect to other page when player quota is over
+              /*** check player quota at WebSocket session level(max 4 players on one session)**/
+              // when quota is reached, reject requested handshake
               if(SessionManager.getSessionCount(data.session.sessionid)==4){
                 accept('Player Quota Reached!', false);
               }
@@ -72,20 +74,20 @@ io.set('authorization', function (data, accept) {
 
 io.sockets.on('connection', function (socket) {
   var sessionId=socket.handshake.session.sessionid;
-  console.log("New Session Established:" + sessionId);
-      
+  console.log("New Session Established:" + sessionId);        
+
   var session ={
     userid:'',    
     sessionid:sessionId,
     ws:socket
   } 
   
-  socket.on('newuser',function(username){
-    session.userid=username;
+  socket.on('newuser',function(userid){
+    session.userid=userid;
     sessions.push(session);    
-    SessionManager.sendMessage(sessionId,Message.createMessage('chat',username + ' just joined in.'));
+    SessionManager.sendMessage(sessionId,Message.createMessage('chat',userid + ' just joined in.'));
     SessionManager.sendMessage(sessionId,Message.createMessage('userupdate',SessionManager.getUsersList(sessionId)));
-  });
+  });  
   
   socket.on('newgame',function(message){    
     SessionManager.sendMessage(sessionId,Message.createMessage('chat',message));    
@@ -140,13 +142,13 @@ io.sockets.on('connection', function (socket) {
       if(sessions[i].ws==socket){
               sessions.splice(i,1);              
       }      
-    }   
+    }
     SessionManager.sendMessage(sessionId,Message.createMessage('chat',session.userid + ' left the room.'));
     SessionManager.sendMessage(sessionId,Message.createMessage('userupdate',SessionManager.getUsersList(sessionId)));
   });
 });
 
-app.listen(port, function(){
+app.listen(port, function(){  
   
 /*  var wss = new WebSocketServer({server:app,path:'/socket'});
 	wss.on('connection', function(ws) {                
@@ -205,7 +207,7 @@ var SessionManager=new function(){
   }
   
   this.getUsersList=function(sessionId){
-    var usersList=['PL1','PL2','PL3','PL4'];
+    var usersList=['Player1','Player2','Player3','Player4'];
     var match=0;
     for (var i = 0; i < sessions.length; i++) {
       if(sessions[i].sessionid==sessionId){
@@ -215,6 +217,15 @@ var SessionManager=new function(){
     }  
         
     return usersList;
+  }
+
+  this.getCurrentSessions=function(){
+    var sessionsList=[];
+    for (var i = 0; i < sessions.length; i++) {      
+       sessionsList.push(sessions[i].sessionid);              
+    }  
+        
+    return sessionsList;
   }
 }
 

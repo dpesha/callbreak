@@ -7,6 +7,11 @@ html
     script(type='text/javascript', src='/javascripts/cards.js')
     script(type='text/javascript', src='/socket.io/socket.io.js')
   body
+    #popup
+      #popupContent
+        span Input your name below & press Enter.
+        br
+        input#userid(type='text')(value='Your Name')(autofocus)
     #header
     #menu
       a#newgame(href='#') New Game
@@ -17,11 +22,11 @@ html
         #board.playingCards.faceImages
           #player4
             ul.hand
-            .name PL4
+            .name Player4
           #center  
             #player3
               ul.hand
-              .name PL3
+              .name Player3
             #mid
               #round
                 ul#roundtable.deck
@@ -53,18 +58,18 @@ html
                     div.card.back *                  
             #player1
               ul.hand
-              .name PL1
+              .name Player1
           #player2
             ul.hand
-            .name PL2
+            .name Player2
       #col-right
         #pointtable
           table
             tr
-              th PL1
-              th PL2
-              th PL3
-              th PL4
+              th Player1
+              th Player2
+              th Player3
+              th Player4
             tr
               td 0
               td 0
@@ -104,4 +109,5 @@ html
           #messages            
           input#messageText type=text
     #footer
+    #backgroundPopup
   

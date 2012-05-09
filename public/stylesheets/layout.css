@@ -87,7 +87,7 @@ th {
 
 #player4{
   float:left;
-  width:200px;
+  width:300px;
   position:relative;  
 }
 
@@ -97,7 +97,7 @@ th {
 
 #player2{
   float:right;
-  width:200px;
+  width:300px;
   position:relative;  
 }
 
@@ -105,7 +105,14 @@ th {
 #player2 ul
 {
    margin-top:21%;
-    -webkit-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);  /* Saf3.1+, Chrome */
+     -moz-transform: rotate(90deg);  /* FF3.5+ */
+      -ms-transform: rotate(90deg);  /* IE9 */
+       -o-transform: rotate(90deg);  /* Opera 10.5 */
+          transform: rotate(90deg);*/
+         /*    filter: progid:DXImageTransform.Microsoft.Matrix(/* IE6–IE9 
+                     M11=-1, M12=-1.2246063538223773e-16, M21=1.2246063538223773e-16, M22=-1, sizingMethod='auto expand');
+           /*    zoom: 1;*/
 }
 
 #player4 div,
@@ -153,4 +160,39 @@ th {
 {
     float:left;    
 }
+
+#popup
+{
+  padding:20px;  
+  display:none;  
+  z-index:2;  
+  font-size:22px;
+  font-weight:bold;
+  background: #eeeeee;
+  color: #444;
+  border: 1px solid #1a1a1a;
+  outline: none;
+}
+
+#userid
+{
+  font-size:14px;
+  font-weight:bold;
+  color: #787878;
+  width:100%;
+}
+
+
+#backgroundPopup
+{  
+  display:none;  
+  position:fixed;  
+  height:100%;  
+  width:100%;  
+  top:0;  
+  left:0;  
+  background:#000000;  
+  border:1px solid #cecece;  
+  z-index:1;  
+} 
 

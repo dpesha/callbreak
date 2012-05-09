@@ -1,4 +1,5 @@
-var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, '$1$2');
+var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, 'ws$2');
+var http_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, 'http$2');
 
 var User = new function(){
     this.userid='';
@@ -26,15 +27,21 @@ var Message= {
 
 /*socket.io implementaiton*/
 var Server={       
-    connect:function(){           
-    var socket = io.connect(ws_host);
+    connect:function(userid){
+               
+    var socket = io.connect(ws_host,{reconnect:false});
+    // in case of socket.io error redirect to top page
+    socket.on('error', function (reason){
+      console.error('Unable to connect Socket.IO', reason);
+      window.location = http_host+'/quotaover';
+    });
     socket.on('connect', function () {
-        var name;
-        socket.emit('newuser', name=prompt("What's your name?"));
-        User.setUserid(name);
+        
+        socket.emit('newuser', userid);
+        User.setUserid(userid);
     socket.on('message', function (message) {
         var parsed=Message.parseMessage(message);
-        switch(parsed.type){            
+        switch(parsed.type){                      
             case 'chat':
                 $('#messages').prepend(parsed.message);
                 $('#messages').prepend("<hr>");
@@ -186,11 +193,13 @@ $(document).ready(function() {
       return this;
     }
 
-
+    $('#userid')
     
-    var server=Server.connect();  
+    var server; 
     Board.storeOriginal();
     
+    loadPopup();
+    $('#userid').focus();
     
     $('#distribute').hide();
 
@@ -207,6 +216,20 @@ $(document).ready(function() {
     // distribute cards    
     $('#distribute').bind('click',function(){
        server.emit('distribute', User.getUserid() + ' distributed cards.');      
+    });
+
+    $('#userid').bind('click',function(event) {
+        $('#userid').val('');
+    });
+
+     $('#userid').keypress(function(event) {
+        if ( event.which == 13 ) {
+        var userid = $('#userid').val();
+        if(userid!=''){        
+          server=Server.connect(userid);                    
+          disablePopup();
+        }
+       }                    
     });
       
     
@@ -250,3 +273,44 @@ $(document).ready(function() {
   });
    
 });
+
+//loading popup with jQuery magic!
+function loadPopup(){
+    centerPopup();
+    
+    $("#backgroundPopup").css({
+    "opacity": "0.7"
+    });
+    $("#backgroundPopup").fadeIn("slow");
+    $("#popup").fadeIn("slow");
+  }
+
+
+//disabling popup with jQuery magic!
+function disablePopup(){ 
+    
+    $("#backgroundPopup").fadeOut("slow");
+    $("#popup").fadeOut("slow");
+    
+}
+
+//centering popup
+function centerPopup(){
+    //request data for centering
+    var windowWidth = document.documentElement.clientWidth;
+    var windowHeight = document.documentElement.clientHeight;
+    var popupHeight = $("#popup").height();
+    var popupWidth = $("#popup").width();
+    //centering
+    $("#popup").css({
+    "position": "absolute",
+    "top": windowHeight/2-popupHeight/2,
+    "left": windowWidth/2-popupWidth/2
+    });
+    
+
+    $("#backgroundPopup").css({
+    "height": windowHeight
+    });
+
+}
