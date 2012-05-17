@@ -5,7 +5,7 @@ exports.games = [];
 exports.Player = function(name) {
 	this.id = name;
 	name = name;
-	cards = [];
+	this.cards = [];
 	gameId = '';
 	this.randomCard = null;
 	this.position = 0;
@@ -45,20 +45,29 @@ exports.Player = function(name) {
 
 	this.shuffle =function(){
 		if(this.canShuffle){
-
+			exports.gameManager.shuffleCards(this.gameId);
 		}
 	}
 
 	this.deal = function() {
 		if(this.canDeal){
-
+			exports.gameManager.dealCards(this.gameId);
 		}
 	}
 
-	this.bid = function() {
+	this.bidPoint = function(point) {
+		if(this.canBid){
+			exports.gameManager.bidPoint(point,this);
+			this.canBid=false;
+			console.log(exports.round.bids.length);
+		}
 		
 	}
-	this.throwCard = function(rank, suit) {		
+
+	this.throwCard = function(rank, suit) {	
+		if(this.canThrowCard){
+
+		}	
 	}
 
 };
@@ -70,8 +79,8 @@ exports.Game = function() {
 
 	this.gameId = '';
 	this.player = [];
-	this.turn = [];
-	this.round = [];
+	this.draw = [];
+	this.rounds = [];
 	this.playOrder = null;
 
 	exports.Game.SET_OF_CARDS = 1;
@@ -207,7 +216,7 @@ exports.gameManager = {
 			player: player.id,
 			card: game.deck.drawRandomCard()
 		};
-		game.turn.push(player_card);
+		game.draw.push(player_card);
 
 
 	},
@@ -217,18 +226,18 @@ exports.gameManager = {
 
 		var game = exports.gameManager.getGame(gameId);
 		var players = game.player;
-		var turn = game.turn;
-		if (turn.length < exports.Game.PLAYER_QUOTA) {
+		var draw = game.draw;
+		if (draw.length < exports.Game.PLAYER_QUOTA) {
 			return;
 		} else {
 
 			var temp = [];
-			for (x in turn) {
+			for (x in draw) {
 
-				temp.push([turn[x].player, turn[x].card.getValue(), turn[x].card.getSuit()]);
+				temp.push([draw[x].player, draw[x].card.getValue(), draw[x].card.getSuit()]);
 
 				// after all player has drawn card; push card back into the deck;
-				game.deck.cards.push(turn[x].card);
+				game.deck.cards.push(draw[x].card);
 
 			}
 			game.playOrder = temp.sort(function(a, b) {
@@ -263,39 +272,78 @@ exports.gameManager = {
 
 	},
 
-	shuffleCards:function(){
+	shuffleCards:function(gameId){
+		var game = exports.gameManager.getGame(gameId);
+		game.deck.shuffle();
 
 	},
 
-	dealCards:function(){
+	dealCards:function(gameId){
+		var game = exports.gameManager.getGame(gameId);
+		var cards= game.deck.deal(exports.Game.PLAYER_QUOTA);
+		var players=game.player;
+		var n = cards.length / exports.Game.PLAYER_QUOTA;
 
+		// distribute cards among players;
+		for(var i = 0; i <exports.Game.PLAYER_QUOTA;i++){
+			for(var j = 0; j < n; j++) {
+				for(x in players) {
+					if(players[x].position === i) {
+						players[x].cards.push(cards[j+(i*n)]);
+						if(i===1){
+							players[x].canBid=true;
+						} else {
+							players[x].canBid=false;
+						}
+					}
+				}				
+			}
+		}
+
+	},
+
+	bidPoint:function(point,player){
+		var game=exports.gameManager.getGame(player.gameId);
+		var players=game.player;
+		exports.round.bids.push({'player':player.id,'bid':point});
+		
+
+		for(x in players){
+			if(players[x].position == player.position){
+								
+				// allow next player to bid
+				if((x+1) < exports.Game.PLAYER_QUOTA ){
+					players[x+1].canBid=true;
+				} else {
+					players[0].canBid=true;
+				}
+			}
+		}
+	},
+
+	freezeBidding:function(gameId){
+		var game=exports.gameManager.getGame(player.gameId);
+		var players=game.player;
+		for(x in players){
+			players[x].canBid=false;
+			if(players[x].position === 1) {
+				players[x].canThrowCard=true
+			} else {
+				players[x].canThrowCard=false;
+			}
+		}
 	}
+
 
 
 };
 
-
-exports.table = {
-	player: [],
-	south: '',
-	east: '',
-	north: '',
-	west: '',
-	rotate: function() {
-
-	}
-};
 
 exports.turn = {
 	cards: []
 };
 
 exports.round = {
-	current: 0,
-	start: function() {
-
-	},
-	end: function() {
-
-	}
+	bids:[],
+	turns:[]	
 };

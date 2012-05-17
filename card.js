@@ -170,11 +170,12 @@ exports.deck = function() {
 		
 			var dealtCards = [];
 			var dealRound = this.cards.length / n;
-
-			for (var i = 0; i < n; i++)
-			for (var j = 0; j < dealRound; j++)
-			dealtCards.push(this.cards[i + (j * dealRound)]);
-
+			
+			for (var i = 0; i < dealRound; i++) {
+				for (var j = 0; j < n; j++) {
+					dealtCards.push(this.cards[i + (j * dealRound)]);
+				}
+			}
 			return dealtCards;
 		
 	};

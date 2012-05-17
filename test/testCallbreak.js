@@ -55,6 +55,51 @@ exports['test player join ']=function(test){
 
 	player5.drawRandomCard();
 	test.equal(xxx.games[0].deck.cards.length,52);
+
+	
+	if(player1.position==0){
+		player1.shuffle();
+		player1.deal();
+	}
+	
+	if(player2.position==0){
+		player2.shuffle();
+		player2.deal();
+	}
+	if(player3.position==0){
+		player3.shuffle();
+		player3.deal();
+	}
+	if(player5.position==0){
+		player5.shuffle();
+		player5.deal();
+	}
+
+	test.equal(player1.cards.length,13);
+	test.equal(player2.cards.length,13);
+	test.equal(player3.cards.length,13);
+	test.equal(player5.cards.length,13);
+
+	var players=xxx.games[0].player;
+	var count=0;
+	while(count!=4){
+		for(var x = 0 in players){
+			console.log("player:"+ players[x].id + "position:"+ players[x].position +':' + players[x].canBid);
+			if(players[x].canBid){
+				players[x].bidPoint(3);
+				test.equal(players[x].canBid,false);
+				count ++;
+			}
+		}
+	}
+
+	
+	for(x in xxx.games[0].player){
+		console.log("player:"+ xxx.games[0].player[x].id + ':' + xxx.games[0].player[x].canBid);
+	}
+	
+	
+
 	
 
 	// another room test
