@@ -1,252 +1,230 @@
 var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, 'ws$2');
 var http_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, 'http$2');
 
-var User = new function(){
-    this.userid='';
-    this.getUserid=function(){
-        return this.userid;
+var User = new function() {
+    this.userid = '';
+    this.getUserid = function() {
+      return this.userid;
     }
-    this.setUserid=function(userid){
-        this.userid=userid;
+    this.setUserid = function(userid) {
+      this.userid = userid;
     }
-}
+  }
 
-var Message= {
-    createMessage:function(type,message){
-        var msg={          
-          type: type,
-          message:message
-        };
-        return JSON.stringify(msg);
-    },
-    parseMessage:function(message){
-        return JSON.parse(message);
-    }
+var Message = {
+  createMessage: function(type, message) {
+    var msg = {
+      type: type,
+      message: message
+    };
+    return JSON.stringify(msg);
+  },
+  parseMessage: function(message) {
+    return JSON.parse(message);
+  }
 };
 
 
 /*socket.io implementaiton*/
-var Server={       
-    connect:function(userid){
-               
-    var socket = io.connect(ws_host,{reconnect:false});
+var Server = {
+  connect: function(userid) {
+    
+    var socket = io.connect(ws_host, {
+      reconnect: false
+    });
     // in case of socket.io error redirect to top page
-    socket.on('error', function (reason){
+    socket.on('error', function(reason) {
       console.error('Unable to connect Socket.IO', reason);
-      window.location = http_host+'/quotaover';
+      window.location = http_host + '/quotaover';
     });
-    socket.on('connect', function () {
-        
-        socket.emit('newuser', userid);
-        User.setUserid(userid);
-    socket.on('message', function (message) {
-        var parsed=Message.parseMessage(message);
-        switch(parsed.type){                      
-            case 'chat':
-                $('#messages').prepend(parsed.message);
-                $('#messages').prepend("<hr>");
-                break;
-            case 'userupdate':
-                var tableHeader=$('#pointtable > table > tbody> tr > th');
-                var usersList=parsed.message.slice(0);
-                
-                /* Rotate table*/
-                for(var i=0 ;i<parsed.message.length;i++){
-                    if(parsed.message[i]==User.getUserid()){
-                        usersList.rotate(i);
-                        break;
-                    }
-                }
-                
-                for (var j=0; j< tableHeader.size(); j++) {
-                    for (var i = 0; i < parsed.message.length; i++) {
-                        tableHeader.eq(i).text(parsed.message[i]);
-                        $('#player'+(i+1)+' > .name').text(usersList[i]);
-                    }
-                }
-                break;
-            case 'newgame':
-                $('#shuffle').show();
-                $('#distribute').hide();
-                $('#board').html(Board.reloadOriginal());
-                $('td').html(0);
-                break;
-            case 'cardshuffle':
-                $('#distribute').show(); 
-                break;
-            case 'carddistribute':
-                for(var i=0;i<13;i++){
-                    var cardCss=parsed.message[i].split(' ');
-                    var rank=cardCss[0].split('-')[1].toUpperCase()
-                    var suit='&'+cardCss[1]+';'
-                    $('#player4 > ul.hand,#player3 > ul.hand,#player2 > ul.hand ').append('<li><div class="card back">*</div></li>');
-                    $('#player1 > ul.hand').append('<li><a class="card '+parsed.message[i]+'" href="#"><span class="rank">'+rank+'</span><span class="suit">'+suit+'</span></a></li>');
-                }
+    socket.on('connect', function() {
 
-                // bind card click funtcion
-                $('a.card').bind('click',function(){                  
-                   var message={
-                       user:User.getUserid(),                       
-                       card:$(this).prop('class')
-                   };
-                   socket.emit('myturn',message);
-                });
+      socket.emit('newuser', userid);
+      User.setUserid(userid);
+      socket.on('message', function(message) {
+        var parsed = Message.parseMessage(message);
+        switch (parsed.type) {
+        case 'chat':
+          $('#messages').prepend(parsed.message);
+          $('#messages').prepend("<hr>");
+          break;
+        case 'userupdate':
+          var tableHeader = $('#pointtable > table > tbody> tr > th');
+          var usersList = parsed.message.slice(0);
+
+          /* Rotate table*/
+          for (var i = 0; i < parsed.message.length; i++) {
+            if (parsed.message[i] == User.getUserid()) {
+              usersList.rotate(i);
+              break;
+            }
+          }
+
+          for (var j = 0; j < tableHeader.size(); j++) {
+            for (var i = 0; i < parsed.message.length; i++) {
+              tableHeader.eq(i).text(parsed.message[i]);
+              $('#player' + (i + 1) + ' > .name').text(usersList[i]);
+            }
+          }
+          break;
+        case 'newgame':
+          $('#shuffle').show();
+          $('#distribute').hide();
+          $('#board').html(Board.reloadOriginal());
+          $('td').html(0);
+          break;
+        case 'cardshuffle':
+          $('#distribute').show();
+          break;
+        case 'carddistribute':
+          for (var i = 0; i < 13; i++) {
+            var cardCss = parsed.message[i].split(' ');
+            var rank = cardCss[0].split('-')[1].toUpperCase()
+            var suit = '&' + cardCss[1] + ';'
+            $('#player4 > ul.hand,#player3 > ul.hand,#player2 > ul.hand ').append('<li><div class="card back">*</div></li>');
+            $('#player1 > ul.hand').append('<li ><a class="card ' + parsed.message[i] + '" href="#" ><span class="rank">' + rank + '</span><span class="suit">' + suit + '</span></a></li>');
 
 
-                $('#player2,#player4').css('padding-top','12%');
-                $('#mid > #round > #roundtable').remove();
-                $('#mid > #round').append('<div id="roundtable"><div class="player3"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
-                                       <div><div class="player4"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
-                                       <div class="player2"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>\
-                                       <div class="player1"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>');
-                
-                // bind card click funtcion
-                $('#roundtable').bind('click',function(){                  
-                   socket.emit('cleartable',User.getUserid()+' cleared table.');
-                });
+          }
 
-                $('#shuffle').hide();     
-                $('#distribute').hide();
-                break;
+          // bind card click funtcion
+          $('a.card').bind('click', function() {
+            var message = {
+              user: User.getUserid(),
+              card: $(this).prop('class')
+            };
+            socket.emit('myturn', message);
+          });
 
-            case 'myturn':
+          
+          $('#player2,#player4').css('padding-top', '12%');
+          $('#mid > #round > #roundtable').remove();
+          $('#mid > #round').append('<div id="roundtable"><div class="player3"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
+           <div><div class="player4"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
+           <div class="player2"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>\
+           <div class="player1"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>');
 
-               var user=parsed.message['user'];
-               var card=parsed.message['card'];
-               var player=$('.name:contains('+user+')').parent().prop('id');               
-               var cardOnTable=$('div.'+player).children('div');
-               cardOnTable.removeClass();
-               cardOnTable.addClass(card);
-               var cardCss=card.split(' ');
-               cardOnTable.children('span.rank').html(cardCss[1].split('-')[1].toUpperCase());
-               cardOnTable.children('span.suit').html('&'+cardCss[2]+';');
-                
-               // hide selected card
-               $('.name:contains('+user+')').parent().children('ul').children('li').children('a.'+card.replace(/ /g,'.')).hide(); 
-               $('.name:contains('+user+')').parent().children('ul').children('li').eq(0).children('div').remove();
-               break;
+          // bind card click funtcion
+          $('#roundtable').bind('click', function() {
+            socket.emit('cleartable', User.getUserid() + ' cleared table.');
+          });
 
-           case 'cleartable':
-               var target=$('div[class^="player"]').children('div');
-               target.removeClass();
-               target.addClass('card');
-               target.children('span.rank').html('');
-               target.children('span.suit').html('');
-               break;
+          $('#shuffle').hide();
+          $('#distribute').hide();
+          break;
 
-           case 'pointtableupdate':
-               var col=parsed.message['col'];
-               var row=parsed.message['row'];
-               var data=parsed.message['data'];
-               $('#pointtable  table  tbody  tr:nth-child('+(row+1)+')  td:nth-child('+(col+1)+')').html(data);
+        case 'myturn':
 
-               break;               
-         }       
-    });
+          var user = parsed.message['user'];
+          var card = parsed.message['card'];
+          var player = $('.name:contains(' + user + ')').parent().prop('id');
+          var cardOnTable = $('div.' + player).children('div');
+          cardOnTable.removeClass();
+          cardOnTable.addClass(card);
+          var cardCss = card.split(' ');
+          cardOnTable.children('span.rank').html(cardCss[1].split('-')[1].toUpperCase());
+          cardOnTable.children('span.suit').html('&' + cardCss[2] + ';');
+
+          // hide selected card
+          $('.name:contains(' + user + ')').parent().children('ul').children('li').children('a.' + card.replace(/ /g, '.')).hide();
+          $('.name:contains(' + user + ')').parent().children('ul').children('li').eq(0).children('div').remove();
+          break;
+
+        case 'cleartable':
+          var target = $('div[class^="player"]').children('div');
+          target.removeClass();
+          target.addClass('card');
+          target.children('span.rank').html('');
+          target.children('span.suit').html('');
+          break;
+
+        case 'pointtableupdate':
+          var col = parsed.message['col'];
+          var row = parsed.message['row'];
+          var data = parsed.message['data'];
+          $('#pointtable  table  tbody  tr:nth-child(' + (row + 1) + ')  td:nth-child(' + (col + 1) + ')').html(data);
+
+          break;
+        }
+      });
     });
     return socket;
-    }};
-
-/*
-var Server={       
-    connect:function(){     
-    var wsc = new WebSocket(ws_host);    
-        wsc.onopen= function() {
-            wsc.send(Message.createMessage('chat','new player has joined!'));
-        };
-
-        wsc.onmessage= function(message) {
-            var parsed=Message.parseMessage(message.data);
-            if(parsed.type=='chat'){
-                $('#messages').prepend(parsed.message);
-                $('#messages').prepend("<hr>");                
-            }            
-        };
-        
-        wsc.onclose= function() {                    
-        };
-        return wsc;
-    },
-    disconnect:function(wsc){
-        wsc.close();
-    }
-   
-};
-*/
-
-var Board= new function(){
-  this.template='';  
-  this.storeOriginal=function(){
-    this.template=$('#board').html();
-  },
-  this.reloadOriginal=function(){
-    return this.template;
   }
-}
+};
+
+
+var Board = new function() {
+    this.template = '';
+    this.storeOriginal = function() {
+      this.template = $('#board').html();
+    }, this.reloadOriginal = function() {
+      return this.template;
+    }
+  }
 
 
 $(document).ready(function() {
-    
-    /* Rotate Array */
-    Array.prototype.rotate = function( n ) {
-      this.unshift.apply( this, this.splice( n, this.length ) )
-      return this;
+
+  /* Rotate Array */
+  Array.prototype.rotate = function(n) {
+    this.unshift.apply(this, this.splice(n, this.length))
+    return this;
+  }
+
+  $('#userid')
+
+  var server;
+  Board.storeOriginal();
+
+  loadPopup();
+  $('#userid').focus();
+
+  $('#distribute').hide();
+
+  // new game
+  $('#newgame').bind('click', function() {
+    server.emit('newgame', User.getUserid() + ' stared a new game.');
+  });
+
+  // shuffle cards
+  $('#shuffle').bind('click', function() {
+    server.emit('shuffle', User.getUserid() + ' shuffled cards.');
+  });
+
+  // distribute cards    
+  $('#distribute').bind('click', function() {
+    server.emit('distribute', User.getUserid() + ' distributed cards.');
+  });
+
+  $('#userid').bind('click', function(event) {
+    $('#userid').val('');
+  });
+
+  $('#userid').keypress(function(event) {
+    if (event.which == 13) {
+      var userid = $('#userid').val();
+      if (userid != '') {
+        server = Server.connect(userid);
+        disablePopup();
+      }
     }
+  });
 
-    $('#userid')
-    
-    var server; 
-    Board.storeOriginal();
-    
-    loadPopup();
-    $('#userid').focus();
-    
-    $('#distribute').hide();
 
-    // new game
-    $('#newgame').bind('click',function(){
-        server.emit('newgame',User.getUserid() + ' stared a new game.');        
-    });
+  $('#messageText').keypress(function(event) {
+    if (event.which == 13) {
+      var message = $('#messageText').val();
+      server.send(Message.createMessage('chat', User.getUserid() + ':' + message));
+      $('#messageText').val('');
+    }
+  });
 
-    // shuffle cards
-    $('#shuffle').bind('click',function(){
-       server.emit('shuffle',User.getUserid() + ' shuffled cards.');
-    });
+  $('td').attr('contenteditable', 'true');
+  $('td').keydown(function(event) {
 
-    // distribute cards    
-    $('#distribute').bind('click',function(){
-       server.emit('distribute', User.getUserid() + ' distributed cards.');      
-    });
-
-    $('#userid').bind('click',function(event) {
-        $('#userid').val('');
-    });
-
-     $('#userid').keypress(function(event) {
-        if ( event.which == 13 ) {
-        var userid = $('#userid').val();
-        if(userid!=''){        
-          server=Server.connect(userid);                    
-          disablePopup();
-        }
-       }                    
-    });
-      
-    
-    $('#messageText').keypress(function(event) {
-       if ( event.which == 13 ) {
-        var message = $('#messageText').val();                    
-        server.send(Message.createMessage('chat',User.getUserid() + ':' + message));
-        $('#messageText').val('');    
-       }                    
-    });
-
-    $('td').attr('contenteditable','true');
-    $('td').keydown(function(event){
-
-      var esc = event.which == 27,
+    var esc = event.which == 27,
       nl = event.which == 13,
-      el = event.target,      
+      el = event.target,
       data = {};
 
     if (el) {
@@ -257,60 +235,63 @@ $(document).ready(function() {
 
       } else if (nl) {
         // send changed cell data to server
-        var message={
-            user:User.getUserid(),
-            col:$(this).parent().children().index($(this)),
-            row:$(this).parent().parent().children().index($(this).parent()),
-            data:$(this).html()
-        };        
-        server.emit('pointtableupdate',message);
-        
+        var message = {
+          user: User.getUserid(),
+          col: $(this).parent().children().index($(this)),
+          row: $(this).parent().parent().children().index($(this).parent()),
+          data: $(this).html()
+        };
+        server.emit('pointtableupdate', message);
+
 
         el.blur();
         event.preventDefault();
       }
     }
   });
-   
+
 });
 
 //loading popup with jQuery magic!
-function loadPopup(){
-    centerPopup();
-    
-    $("#backgroundPopup").css({
+
+function loadPopup() {
+  centerPopup();
+
+  $("#backgroundPopup").css({
     "opacity": "0.7"
-    });
-    $("#backgroundPopup").fadeIn("slow");
-    $("#popup").fadeIn("slow");
-  }
+  });
+  $("#backgroundPopup").fadeIn("slow");
+  $("#popup").fadeIn("slow");
+}
 
 
 //disabling popup with jQuery magic!
-function disablePopup(){ 
-    
-    $("#backgroundPopup").fadeOut("slow");
-    $("#popup").fadeOut("slow");
-    
+
+function disablePopup() {
+
+  $("#backgroundPopup").fadeOut("slow");
+  $("#popup").fadeOut("slow");
+
 }
 
 //centering popup
-function centerPopup(){
-    //request data for centering
-    var windowWidth = document.documentElement.clientWidth;
-    var windowHeight = document.documentElement.clientHeight;
-    var popupHeight = $("#popup").height();
-    var popupWidth = $("#popup").width();
-    //centering
-    $("#popup").css({
-    "position": "absolute",
-    "top": windowHeight/2-popupHeight/2,
-    "left": windowWidth/2-popupWidth/2
-    });
-    
 
-    $("#backgroundPopup").css({
+function centerPopup() {
+  //request data for centering
+  var windowWidth = document.documentElement.clientWidth;
+  var windowHeight = document.documentElement.clientHeight;
+  var popupHeight = $("#popup").height();
+  var popupWidth = $("#popup").width();
+  //centering
+  $("#popup").css({
+    "position": "absolute",
+    "top": windowHeight / 2 - popupHeight / 2,
+    "left": windowWidth / 2 - popupWidth / 2
+  });
+
+
+  $("#backgroundPopup").css({
     "height": windowHeight
-    });
+  });
 
 }
