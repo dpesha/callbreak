@@ -2,7 +2,7 @@ var deckManager = require('./card');
 exports.games = [];
 
 
-exports.player = function(name) {
+exports.Player = function(name) {
 	this.id = name;
 	name = name;
 	cards = [];
@@ -66,7 +66,7 @@ exports.player = function(name) {
 
 
 /* Model representing Single Game */
-exports.game = function() {
+exports.Game = function() {
 
 	this.gameId = '';
 	this.player = [];
@@ -74,18 +74,18 @@ exports.game = function() {
 	this.round = [];
 	this.playOrder = null;
 
-	exports.game.SET_OF_CARDS = 1;
-	exports.game.PLAYER_QUOTA = 4;
+	exports.Game.SET_OF_CARDS = 1;
+	exports.Game.PLAYER_QUOTA = 4;
 
 
 	/* Game State Constants*/
-	exports.game.WAITING_FOR_PLAYERS_TO_JOIN = 0;
-	exports.game.PLAYER_QUOTA_REACHED = 1;
-	exports.game.WAITING_FOR_PLAYERS_TO_DRAW_CARD = 2;
-	exports.game.CAN_DEAL_CARD = 3;
-	exports.game.WAITING_FOR_PLAYER_TO_BID = 4;
+	exports.Game.WAITING_FOR_PLAYERS_TO_JOIN = 0;
+	exports.Game.PLAYER_QUOTA_REACHED = 1;
+	exports.Game.WAITING_FOR_PLAYERS_TO_DRAW_CARD = 2;
+	exports.Game.CAN_DEAL_CARD = 3;
+	exports.Game.WAITING_FOR_PLAYER_TO_BID = 4;
 
-	this.state = exports.game.WAITING_FOR_PLAYERS_TO_JOIN;
+	this.state = exports.Game.WAITING_FOR_PLAYERS_TO_JOIN;
 	this.deck = null;
 
 };
@@ -102,7 +102,7 @@ exports.gameManager = {
 
 		var game = exports.gameManager.getGame(gameId);
 
-		if (exports.gameManager.getPlayerCount(gameId) < exports.game.PLAYER_QUOTA) {
+		if (exports.gameManager.getPlayerCount(gameId) < exports.Game.PLAYER_QUOTA) {
 			exports.gameManager.getGame(gameId).player.push(player);
 			exports.gameManager.updatePlayerCount(gameId);
 		}
@@ -123,7 +123,7 @@ exports.gameManager = {
 
 	// create a new Game with 'gameId'
 	createNewGame: function(gameId) {
-		var game = new exports.game();
+		var game = new exports.Game();
 		game.gameId = gameId;
 		game.deck = new deckManager.deck();
 		exports.games.push(game);
@@ -150,10 +150,10 @@ exports.gameManager = {
 	/* set the state of Game*/
 	updatePlayerCount: function(gameId) {
 		var game = exports.gameManager.getGame(gameId);
-		if (game.player.length == exports.game.PLAYER_QUOTA) {
-			exports.gameManager.updateGameStatus(gameId, exports.game.PLAYER_QUOTA_REACHED);
+		if (game.player.length == exports.Game.PLAYER_QUOTA) {
+			exports.gameManager.updateGameStatus(gameId, exports.Game.PLAYER_QUOTA_REACHED);
 		} else {
-			exports.gameManager.updateGameStatus(gameId, exports.game.WAITING_FOR_PLAYERS_TO_JOIN);
+			exports.gameManager.updateGameStatus(gameId, exports.Game.WAITING_FOR_PLAYERS_TO_JOIN);
 
 		}
 	},
@@ -165,11 +165,11 @@ exports.gameManager = {
 		var game = exports.gameManager.getGame(gameId);
 		game.state = status;
 		switch (status) {
-		case exports.game.WAITING_FOR_PLAYERS_TO_JOIN:
-			game.deck.init(exports.game.SET_OF_CARDS);
+		case exports.Game.WAITING_FOR_PLAYERS_TO_JOIN:
+			game.deck.init(exports.Game.SET_OF_CARDS);
 			game.deck.shuffle();
 			break;
-		case exports.game.PLAYER_QUOTA_REACHED:
+		case exports.Game.PLAYER_QUOTA_REACHED:
 			for (x in game.player) {
 				game.player[x].canStart = true;
 			}
@@ -218,7 +218,7 @@ exports.gameManager = {
 		var game = exports.gameManager.getGame(gameId);
 		var players = game.player;
 		var turn = game.turn;
-		if (turn.length < exports.game.PLAYER_QUOTA) {
+		if (turn.length < exports.Game.PLAYER_QUOTA) {
 			return;
 		} else {
 
@@ -268,7 +268,7 @@ exports.gameManager = {
 	},
 
 	dealCards:function(){
-		
+
 	}
 
 

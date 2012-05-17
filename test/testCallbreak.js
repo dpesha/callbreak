@@ -4,27 +4,27 @@ exports['test player join ']=function(test){
 
 	test.equal(xxx.games.length,0);
 
-	var player1=new xxx.player('dipesh1');
+	var player1=new xxx.Player('dipesh1');
 	player1.joinGame('abc');
 	test.equal(xxx.games.length,1);	
 	test.equal(xxx.games[0].player.length,1);
 
-	var player2=new xxx.player('dipesh2');
+	var player2=new xxx.Player('dipesh2');
 	player2.joinGame('abc');
 	test.equal(xxx.games.length,1);
 	test.equal(xxx.games[0].player.length,2);	
 
-	var player3=new xxx.player('dipesh3');
+	var player3=new xxx.Player('dipesh3');
 	player3.joinGame('abc');
 	test.equal(xxx.games[0].player.length,3);
 	
-	var player4=new xxx.player('dipesh4');
+	var player4=new xxx.Player('dipesh4');
 	player4.joinGame('abc');
 	test.equal(xxx.games[0].player.length,4);
 
 
 	// max player test
-	var player5=new xxx.player('dipesh5');
+	var player5=new xxx.Player('dipesh5');
 	test.ok(!player5.joinGame('abc'),'should be false here');
 	test.equal(xxx.games.length,1);	
 	test.equal(xxx.games[0].player.length,4);
@@ -58,7 +58,7 @@ exports['test player join ']=function(test){
 	
 
 	// another room test
-	var player=new xxx.player('prabin');
+	var player=new xxx.Player('prabin');
 	player.joinGame('abcd');
 	test.equal(xxx.games.length,2);	
 	test.done();
