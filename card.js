@@ -157,6 +157,7 @@ exports.deck = function() {
 			var tmp, current, top = this.cards.length;
 
 			if (top) while (--top) {
+				
 				current = Math.floor(Math.random() * (top + 1));
 				tmp = this.cards[current];
 				this.cards[current] = this.cards[top];
@@ -182,11 +183,10 @@ exports.deck = function() {
 
 	this.drawRandomCard =function(){
 	
-			var a=Math.floor(Math.random() * (this.cards.length + 1));		
-			var rtn=this.cards[a];			
+			var a=Math.floor(Math.random() * (this.cards.length));		
+			var rtn=this.cards[a];
 			this.cards.splice(a,1);		
 			return rtn;
-	
+	};
 
-	}
 }

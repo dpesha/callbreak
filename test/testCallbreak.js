@@ -1,5 +1,7 @@
 var xxx=require('../callbreak');
 
+ 
+
 exports['test player join ']=function(test){
 
 	test.equal(xxx.games.length,0);
@@ -80,26 +82,115 @@ exports['test player join ']=function(test){
 	test.equal(player3.cards.length,13);
 	test.equal(player5.cards.length,13);
 
-	var players=xxx.games[0].player;
-	var count=0;
-	while(count!=4){
-		for(var x = 0 in players){
-			console.log("player:"+ players[x].id + "position:"+ players[x].position +':' + players[x].canBid);
-			if(players[x].canBid){
-				players[x].bidPoint(3);
-				test.equal(players[x].canBid,false);
-				count ++;
-			}
+
+
+	var players=xxx.games[0].player;		
+	
+	for(var x in players){
+		if(players[x].turn===1){
+			players[x].bidTricks(3);
+			test.equal(players[x].canBid,false);
+			
+		}
+	}
+
+	for( var x in players){
+		if(players[x].turn===2){
+			players[x].bidTricks(3);
+			test.equal(players[x].canBid,false);
+			
+		}
+	}
+
+	for( var x in players){
+		if(players[x].turn===3){
+			players[x].bidTricks(3);
+			test.equal(players[x].canBid,false);
+			
+		}
+	}
+
+	for( var x in players){
+		if(players[x].turn===0){
+			players[x].bidTricks(3);
+			test.equal(players[x].canBid,false);			
 		}
 	}
 
 	
-	for(x in xxx.games[0].player){
-		console.log("player:"+ xxx.games[0].player[x].id + ':' + xxx.games[0].player[x].canBid);
-	}
-	
-	
+	for (var i=0;i<13;i++){
 
+	
+		for(var x in players) {
+			
+			if(players[x].turn===1){
+				
+				var a=players[x].cards.length;
+				var b=players[x].playedTricks.length;					
+				test.equal(players[x].canTrick,true);							
+				players[x].playTrick(players[x].cards[0].getRank(),players[x].cards[0].getSuit());			
+				test.equal(xxx.games[0].hand.length,1);
+				test.equal(players[x].cards.length,a-1);
+				test.equal(players[x].playedTricks.length,b+1);
+				test.equal(players[x].canTrick,false);			
+				test.equal(xxx.games[0].tricks,i);
+				break;
+			}
+		}
+
+		
+
+		for(var x in players) {
+			if(players[x].turn===2){
+				
+				var a=players[x].cards.length;
+				var b=players[x].playedTricks.length;
+				test.equal(players[x].canTrick,true);							
+				players[x].playTrick(players[x].cards[0].getRank(),players[x].cards[0].getSuit());			
+				test.equal(xxx.games[0].hand.length,2);
+				test.equal(players[x].cards.length,a-1);
+				test.equal(players[x].playedTricks.length,b+1);
+				test.equal(players[x].canTrick,false);			
+				test.equal(xxx.games[0].tricks,i);
+				break;
+			}
+		}
+
+		
+
+		for(var x in players) {
+			if(players[x].turn===3){
+				
+				var a=players[x].cards.length;
+				var b=players[x].playedTricks.length;					
+				test.equal(players[x].canTrick,true);
+				players[x].playTrick(players[x].cards[0].getRank(),players[x].cards[0].getSuit());			
+				test.equal(xxx.games[0].hand.length,3);
+				test.equal(players[x].cards.length,a-1);
+				test.equal(players[x].playedTricks.length,b+1);
+				test.equal(players[x].canTrick,false);			
+				test.equal(xxx.games[0].tricks,i);
+				break;
+			}
+		}
+
+		
+
+		for(var x in players) {
+			if(players[x].turn===0){				
+				
+				var a=players[x].cards.length;
+				var b=players[x].playedTricks.length;					
+				test.equal(players[x].canTrick,true);							
+				players[x].playTrick(players[x].cards[0].getRank(),players[x].cards[0].getSuit());			
+				test.equal(xxx.games[0].hand.length,0);
+				test.equal(players[x].cards.length,a-1);
+				test.equal(players[x].playedTricks.length,b+1);				
+				test.equal(xxx.games[0].tricks,i+1);	
+				break;		
+			}
+		}
+	}
 	
 
 	// another room test
