@@ -1,1 +1,4 @@
 /node_modules/*
+.nodester.rc
+jsTestDriver-1.3.4.b.jar
+jsTestDriver.conf

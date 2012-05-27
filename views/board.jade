@@ -1,11 +1,13 @@
 !!! 5
 html
   head
-    script(type='text/javascript', src='http://code.jquery.com/jquery-1.7.1.js')
     link(rel='stylesheet', type='text/css', href='/stylesheets/cards.css', media='screen')
     link(rel='stylesheet', type='text/css', href='/stylesheets/layout.css', media='screen')
-    script(type='text/javascript', src='/javascripts/cards.js')
-    script(type='text/javascript', src='/socket.io/socket.io.js')
+    script(src='/javascripts/libs/jquery-1.7.2.min.js')
+    script(type='text/javascript', src='/javascripts/client.js')
+    script(type='text/javascript', src='/socket.io/socket.io.js')        
+    script(src='/javascripts/libs/ember-0.9.7.1.min.js')
+    script(src='/javascripts/app.js')
   body
     #popup
       #popupContent
@@ -16,17 +18,17 @@ html
     #menu
       a#newgame(href='#') New Game
       a#shuffle(href='#') Shuffle
-      a#distribute(href='#') Distribute
+      a#distribute(href='#') Distribute               
     #content
       #col-left
         #board.playingCards.faceImages
           #player4
             ul.hand
-            .name Player4
+            .name 
           #center  
             #player3
               ul.hand
-              .name Player3
+              .name 
             #mid
               #round
                 ul#roundtable.deck
@@ -56,58 +58,62 @@ html
                     div.card.back *
                   li
                     div.card.back *                  
+       
             #player1
               ul.hand
-              .name Player1
+              .name               
           #player2
             ul.hand
-            .name Player2
+            .name 
       #col-right
         #pointtable
-          table
-            tr
-              th Player1
-              th Player2
-              th Player3
-              th Player4
-            tr
-              td 0
-              td 0
-              td 0
-              td 0
-            tr
-              td 0
-              td 0
-              td 0
-              td 0
-            tr
-              td 0
-              td 0
-              td 0
-              td 0
-            tr
-              td 0
-              td 0
-              td 0
-              td 0
-            tr
-              td(style="font-weight:bold;") 0                
-              td(style="font-weight:bold;") 0
-              td(style="font-weight:bold;") 0
-              td(style="font-weight:bold;") 0               
-            tr
-              td 0
-              td 0
-              td 0
-              td 0
-            tr
-              td(style="font-weight:bold;") 0                
-              td(style="font-weight:bold;") 0
-              td(style="font-weight:bold;") 0
-              td(style="font-weight:bold;") 0  
+          script(type="text/x-handlebars")
+            table            
+              tr                            
+                {{#each Callbreak.pointTableController}}
+                {{#view Callbreak.pointTableView playerBinding="this"}}
+                {{player.getId}}            
+                {{/view}}
+                {{/each}}
+              tr
+                td 0
+                td 0
+                td 0
+                td 0
+              tr
+                td 0
+                td 0
+                td 0
+                td 0
+              tr
+                td 0
+                td 0
+                td 0
+                td 0
+              tr
+                td 0
+                td 0
+                td 0
+                td 0
+              tr
+                td(style="font-weight:bold;") 0                
+                td(style="font-weight:bold;") 0
+                td(style="font-weight:bold;") 0
+                td(style="font-weight:bold;") 0               
+              tr
+                td 0
+                td 0
+                td 0
+                td 0
+              tr
+                td(style="font-weight:bold;") 0                
+                td(style="font-weight:bold;") 0
+                td(style="font-weight:bold;") 0
+                td(style="font-weight:bold;") 0  
         #chatroom
           #messages            
           input#messageText type=text
-    #footer
+    #footer                 
+    #statusMessage
     #backgroundPopup
   

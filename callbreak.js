@@ -20,6 +20,8 @@ exports.Player = function(name) {
 	this.canBid = false;
 	this.canTrick = false;
 
+	this.socket=null;
+
 	this.joinGame = function(gameId) {
 		this.gameId = gameId;
 		exports.gameManager.joinGame(gameId, this);

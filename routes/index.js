@@ -4,8 +4,9 @@
  */
 
 exports.index = function(req, res){
+	var label="";
 	if(req.params.message=='quotaover'){
-		var label='Ohh..Looks like we have reached Player Quota! Please click [Play Now!] below to play Callbreak with other friends.'
+		label='Ohh..Looks like we have reached Player Quota! Please click [Play Now!] below to play Callbreak with other friends.'
 	}
   res.render('index', { title: 'Call Break Online',label:label});
 };

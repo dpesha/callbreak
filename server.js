@@ -1,5 +1,6 @@
 var express = require('express'),
   routes = require('./routes');
+var Cb=require('./callbreak');
   
 
 var app = module.exports = express.createServer();
@@ -15,7 +16,7 @@ app.use(express.session({
 // express Configuration
 app.configure(function() {
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
+  app.set('view engine', 'jade'); 
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
@@ -79,15 +80,19 @@ io.sockets.on('connection', function(socket) {
   var sessionId = socket.handshake.session.sessionid;
   console.log("New Session Established:" + sessionId);
 
-  var session = {
-    userid: '',
-    sessionid: sessionId,
-    ws: socket
-  }
+  // var session = {
+  //   userid: '',
+  //   sessionid: sessionId,
+  //   ws: socket
+  // }
 
   socket.on('newuser', function(userid) {
-    session.userid = userid;
-    sessions.push(session);
+    // session.userid = userid;
+    var player = new Cb.Player(userid);
+    player.socket=socket;
+    player.joinGame(sessionId);
+
+    //sessions.push(session);
     SessionManager.sendMessage(sessionId, Message.createMessage('chat', userid + ' just joined in.'));
     SessionManager.sendMessage(sessionId, Message.createMessage('userupdate', SessionManager.getUsersList(sessionId)));
   });
@@ -162,9 +167,11 @@ var SessionManager = new function() {
 
 
     this.sendMessage = function(sessionId, message) {
-      for (var i = 0; i < sessions.length; i++) {
-        if (sessions[i].sessionid == sessionId) {
-          sessions[i].ws.send(message);
+      for (var i = 0; i < Cb.games.length; i++) {
+        if (Cb.games[i].gameId == sessionId) {
+          for(var x in Cb.games[i].player){
+            Cb.games[i].player[x].socket.send(message);
+          }
         }
       }
     }
@@ -190,12 +197,17 @@ var SessionManager = new function() {
     }
 
     this.getUsersList = function(sessionId) {
-      var usersList = ['Player1', 'Player2', 'Player3', 'Player4'];
-      var match = 0;
-      for (var i = 0; i < sessions.length; i++) {
-        if (sessions[i].sessionid == sessionId) {
-          usersList[match] = sessions[i].userid;
-          match++;
+      var usersList = [];
+      //var match = 0;
+      for (var i = 0; i < Cb.games.length; i++) {
+        if (Cb.games[i].gameId == sessionId) {
+          for(var x in Cb.games[i].player){
+            usersList.push(Cb.games[i].player[x].id);
+          }
+          // for(var x in Cb.games[i].player){
+          //  usersList[match] = Cb.games[i].player[x].id;
+          //   match++;
+          // }
         }
       }
 

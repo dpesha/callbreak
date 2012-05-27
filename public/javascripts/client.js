@@ -49,23 +49,34 @@ var Server = {
           $('#messages').prepend("<hr>");
           break;
         case 'userupdate':
-          var tableHeader = $('#pointtable > table > tbody> tr > th');
+          //var tableHeader = $('#pointtable > table > tbody> tr > th');
           var usersList = parsed.message.slice(0);
 
+          for (var i = 0; i < parsed.message.length; i++) {            
+            Callbreak.playerController.objectAt(i).setId(parsed.message[i]); 
+            Callbreak.pointTableController.objectAt(i).setId(parsed.message[i]);           
+          }
+
+        
           /* Rotate table*/
           for (var i = 0; i < parsed.message.length; i++) {
             if (parsed.message[i] == User.getUserid()) {
-              usersList.rotate(i);
+              for(var j = 0; j < i ; j++) {
+                var a= Callbreak.playerController.shiftObject();             
+                Callbreak.playerController.pushObject(a);
+              }   
               break;
             }
           }
 
-          for (var j = 0; j < tableHeader.size(); j++) {
-            for (var i = 0; i < parsed.message.length; i++) {
-              tableHeader.eq(i).text(parsed.message[i]);
-              $('#player' + (i + 1) + ' > .name').text(usersList[i]);
-            }
-          }
+          // for (var j = 0; j < tableHeader.size(); j++) {
+          //   for (var i = 0; i < parsed.message.length; i++) {
+          //     tableHeader.eq(i).text(parsed.message[i]);
+          //     $('#player' + (i + 1) + ' > .name').text(usersList[i]);
+          //   }
+          // }
+
+          Callbreak.Status.setMessage('Waiting for other ' + (4-parsed.message.length) + " player to join");
           break;
         case 'newgame':
           $('#shuffle').show();
