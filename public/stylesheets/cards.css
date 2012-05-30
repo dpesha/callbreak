@@ -396,19 +396,59 @@
 .playingCards ul.hand li:nth-child(13) { left: 13.9em; }
 
 /* deck */
-.playingCards ul.deck li:nth-child(1)  { left: 0;    bottom: 0; }
-.playingCards ul.deck li:nth-child(2)  { left: 2px;  bottom: 1px; }
-.playingCards ul.deck li:nth-child(3)  { left: 4px;  bottom: 2px; }
-.playingCards ul.deck li:nth-child(4)  { left: 6px;  bottom: 3px; }
-.playingCards ul.deck li:nth-child(5)  { left: 8px;  bottom: 4px; }
-.playingCards ul.deck li:nth-child(6)  { left: 10px; bottom: 5px; }
-.playingCards ul.deck li:nth-child(7)  { left: 12px; bottom: 6px; }
-.playingCards ul.deck li:nth-child(8)  { left: 14px; bottom: 7px; }
-.playingCards ul.deck li:nth-child(9)  { left: 16px; bottom: 8px; }
-.playingCards ul.deck li:nth-child(10) { left: 18px; bottom: 9px; }
-.playingCards ul.deck li:nth-child(11) { left: 20px; bottom: 10px; }
-.playingCards ul.deck li:nth-child(12) { left: 22px; bottom: 11px; }
-.playingCards ul.deck li:nth-child(13) { left: 24px; bottom: 12px; }
+.playingCards ul.deck li:nth-child(1)  { left: 0;    }
+.playingCards ul.deck li:nth-child(2)  { left: 2px;   }
+.playingCards ul.deck li:nth-child(3)  { left: 4px;   }
+.playingCards ul.deck li:nth-child(4)  { left: 6px;   }
+.playingCards ul.deck li:nth-child(5)  { left: 8px;   }
+.playingCards ul.deck li:nth-child(6)  { left: 10px;  }
+.playingCards ul.deck li:nth-child(7)  { left: 12px;  }
+.playingCards ul.deck li:nth-child(8)  { left: 14px;  }
+.playingCards ul.deck li:nth-child(9)  { left: 16px;  }
+.playingCards ul.deck li:nth-child(10) { left: 18px;  }
+.playingCards ul.deck li:nth-child(11) { left: 20px;  }
+.playingCards ul.deck li:nth-child(12) { left: 22px;  }
+.playingCards ul.deck li:nth-child(13) { left: 24px;  }
+.playingCards ul.deck li:nth-child(14)  { left: 26px;    }
+.playingCards ul.deck li:nth-child(15)  { left: 28px;   }
+.playingCards ul.deck li:nth-child(16)  { left: 30px;   }
+.playingCards ul.deck li:nth-child(17)  { left: 32px;   }
+.playingCards ul.deck li:nth-child(18)  { left: 34px;   }
+.playingCards ul.deck li:nth-child(19)  { left: 36px;  }
+.playingCards ul.deck li:nth-child(20)  { left: 38px;  }
+.playingCards ul.deck li:nth-child(21)  { left: 40px;  }
+.playingCards ul.deck li:nth-child(22)  { left: 42px;  }
+.playingCards ul.deck li:nth-child(23) { left: 44px;  }
+.playingCards ul.deck li:nth-child(24) { left: 46px;  }
+.playingCards ul.deck li:nth-child(25) { left: 48px;  }
+.playingCards ul.deck li:nth-child(26) { left: 50px;  }
+.playingCards ul.deck li:nth-child(27)  { left: 52px;    }
+.playingCards ul.deck li:nth-child(28)  { left: 54px;   }
+.playingCards ul.deck li:nth-child(29)  { left: 56px;   }
+.playingCards ul.deck li:nth-child(30)  { left: 58px;   }
+.playingCards ul.deck li:nth-child(31)  { left: 60px;   }
+.playingCards ul.deck li:nth-child(32)  { left: 62px;  }
+.playingCards ul.deck li:nth-child(33)  { left: 64px;  }
+.playingCards ul.deck li:nth-child(34)  { left: 66px;  }
+.playingCards ul.deck li:nth-child(35)  { left: 68px;  }
+.playingCards ul.deck li:nth-child(36) { left: 70px;  }
+.playingCards ul.deck li:nth-child(37) { left: 72px;  }
+.playingCards ul.deck li:nth-child(38) { left: 74px;  }
+.playingCards ul.deck li:nth-child(39) { left: 76px;  }
+.playingCards ul.deck li:nth-child(40)  { left: 78px;    }
+.playingCards ul.deck li:nth-child(41)  { left: 80px;   }
+.playingCards ul.deck li:nth-child(42)  { left: 82px;   }
+.playingCards ul.deck li:nth-child(43)  { left: 84px;   }
+.playingCards ul.deck li:nth-child(44)  { left: 86px;   }
+.playingCards ul.deck li:nth-child(45)  { left: 88px;  }
+.playingCards ul.deck li:nth-child(46)  { left: 90px;  }
+.playingCards ul.deck li:nth-child(47)  { left: 92px;  }
+.playingCards ul.deck li:nth-child(48)  { left: 94px;  }
+.playingCards ul.deck li:nth-child(49) { left: 96px;  }
+.playingCards ul.deck li:nth-child(50) { left: 98px;  }
+.playingCards ul.deck li:nth-child(51) { left: 100px;  }
+.playingCards ul.deck li:nth-child(52) { left: 102px;  }
+
 
 /* rotate cards if rotateHand option is on */
 .playingCards.rotateHand ul.hand li:nth-child(1) {

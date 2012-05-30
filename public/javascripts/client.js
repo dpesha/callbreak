@@ -68,18 +68,8 @@ var Server = {
           for (var i = 0; i < usersList.length; i++) {            
             tableHeader.eq(i).text(usersList[i]);
             $('#player' + (i + 1) + ' > .name').text(usersList[i]);
-          }
-
-          
-          if(parsed.message.player.length == 1){
-            angular.injector(['ng']).invoke(function($rootScope,$controller) {
-              var scope = $rootScope.$new();
-              $controller(MenuCntl, {$scope: scope});             
-              scope.$apply(function(){
-                this.show=true;
-              });
-            });
-          }                              
+          }         
+                                 
           break;
         case 'newgame':
           $('#shuffle').show();
@@ -197,7 +187,7 @@ $(document).ready(function() {
 
   // new game
   $('#start').bind('click', function() {
-    server.emit('newgame', User.getUserid() + ' stared a new game.');
+    server.emit('newgame', User.getUserid() + ' started a new game.');
   });
 
   // shuffle cards
@@ -210,17 +200,13 @@ $(document).ready(function() {
     server.emit('distribute', User.getUserid() + ' distributed cards.');
   });
 
-  $('#userid').bind('click', function(event) {
-    $('#userid').val('');
-  });
-
   $('#userid').keypress(function(event) {
     if (event.which == 13) {
       var userid = $('#userid').val();
-      if (userid != '') {
-        server = Server.connect(userid);
-        disablePopup();
-      }
+      // if (userid != '') {
+      //   server = Server.connect(userid);
+      //   disablePopup();
+      // }
     }
   });
 
@@ -267,7 +253,6 @@ $(document).ready(function() {
 });
 
 //loading popup with jQuery magic!
-
 function loadPopup() {
   centerPopup();
 
@@ -280,7 +265,6 @@ function loadPopup() {
 
 
 //disabling popup with jQuery magic!
-
 function disablePopup() {
 
   $("#backgroundPopup").fadeOut("slow");

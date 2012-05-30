@@ -78,6 +78,7 @@ io.set('authorization', function(data, accept) {
 
 io.sockets.on('connection', function(socket) {
   var sessionId = socket.handshake.session.sessionid;
+  var player=null;
   console.log("New Session Established:" + sessionId);
 
    var session = {
@@ -87,18 +88,27 @@ io.sockets.on('connection', function(socket) {
    }
 
   socket.on('newuser', function(userid) {
-    session.userid = userid;
-    var player = new Cb.Player(userid);    
-    player.joinGame(sessionId);
-
-    sessions.push(session);
-    SessionManager.sendMessage(sessionId, Message.createMessage('chat', userid + ' just joined in.'));
-    SessionManager.sendMessage(sessionId, Message.createMessage('userupdate', SessionManager.getGame(sessionId)));
+    player = new Cb.Player(userid);    
+    if(player.joinGame(sessionId)){
+      session.userid = userid;
+      sessions.push(session);
+      SessionManager.sendMessage(sessionId, Message.createMessage('chat', userid + ' just joined in.'));
+      SessionManager.sendMessage(sessionId, Message.createMessage('userupdate', SessionManager.getGame(sessionId)));
+    } else {      
+      socket.send(Message.createMessage('error', userid + 'could not join'));
+    }    
   });
 
   socket.on('newgame', function(message) {
+    player.startNewGame();
     SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));
-    SessionManager.sendMessage(sessionId, Message.createMessage('newgame', message));
+    SessionManager.sendMessage(sessionId, Message.createMessage('newgame', SessionManager.getGame(sessionId)));
+  });
+
+  socket.on('drawcard', function(index,message) {
+    player.drawRandomCard(index);
+    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));
+    SessionManager.sendMessage(sessionId, Message.createMessage('drawcard', SessionManager.getGame(sessionId)));
   });
 
   socket.on('shuffle', function(message) {

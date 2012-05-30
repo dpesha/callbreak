@@ -4,19 +4,22 @@ html
     link(rel='stylesheet', type='text/css', href='/stylesheets/cards.css', media='screen')
     link(rel='stylesheet', type='text/css', href='/stylesheets/layout.css', media='screen')
     script(src='/javascripts/libs/jquery-1.7.2.min.js')    
-    script(type='text/javascript', src='/javascripts/client.js')    
+    script(type='text/javascript', src='/javascripts/app.js')
+    script(type='text/javascript', src='/javascripts/core.js')  
     script(type='text/javascript', src='/socket.io/socket.io.js')               
   body
     #popup
       #popupContent
-        span Input your name below & press Enter.
+        span What's your name?.
         br
-        input#userid(type='text')(value='Your Name')(autofocus)
+        input#playerInput(type='text')(placeholder='Your name...')(autofocus)
+        br
+        span#joinError
     #header
     #menu     
       a#start(href='#') Start
       a#shuffle(href='#') Shuffle
-      a#distribute(href='#') Distribute
+      a#deal(href='#') Deal
     #content
       #col-left
         #board.playingCards.faceImages
@@ -30,6 +33,84 @@ html
             #mid
               #round
                 ul#roundtable.deck
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *                
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *                
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *                
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
+                  li
+                    div.card.back *
                   li
                     div.card.back *
                   li

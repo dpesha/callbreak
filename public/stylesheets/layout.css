@@ -22,7 +22,12 @@ th {
     color:#fff;
 }
 
+#joinError{
+  color:#b40404;
+}
+
 #statusMessage {
+    clear:both;
     font-size:20px;
     font-weight:bold;
     color:#003F87; 
@@ -30,7 +35,7 @@ th {
 
 #start,
 #shuffle,
-#distribute {
+#deal {
     background-color:#444;	
     display:inline-block;
     font-size:24px;
@@ -168,7 +173,7 @@ th {
   outline: none;
 }
 
-#userid
+#playerInput
 {
   font-weight:bold;
   color: #787878;

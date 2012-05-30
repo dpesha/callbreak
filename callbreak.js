@@ -22,7 +22,7 @@ exports.Player = function(name) {
 
 	this.joinGame = function(gameId) {
 		this.gameId = gameId;
-		exports.gameManager.joinGame(gameId, this);
+		return exports.gameManager.joinGame(gameId, this);
 
 	}
 
@@ -36,7 +36,7 @@ exports.Player = function(name) {
 		}
 
 	}
-	this.drawRandomCard = function() {
+	this.drawRandomCard = function(index) {
 
 		if (this.canDrawRandomCard) {
 			card: exports.gameManager.drawRandomCard(this);
@@ -115,7 +115,11 @@ exports.gameManager = {
 
 		// create new game if it does not exist
 		if (!exports.gameManager.doesgameExist(gameId)) {
-			exports.gameManager.createNewGame(gameId);
+			exports.gameManager.createNewGame(gameId);			
+		} else {
+			if(exports.gameManager.doesplayerExist(gameId,player)){
+				return false;
+			}			
 		}
 
 		var game = exports.gameManager.getGame(gameId);
@@ -123,7 +127,9 @@ exports.gameManager = {
 		if (exports.gameManager.getPlayerCount(gameId) < exports.Game.PLAYER_QUOTA) {
 			exports.gameManager.getGame(gameId).player.push(player);
 			exports.gameManager.updatePlayerCount(gameId);
+			return true;
 		}
+		return false;
 
 	},
 
@@ -137,6 +143,20 @@ exports.gameManager = {
 		}
 		return false;
 	},
+
+	doesplayerExist:function(gameId,player){
+		// for (var i = 0; i < exports.games.length; i++) {
+		// 	if (gameId === exports.games[i].gameId) {
+		// 		for( var j=0;j<exports.games[i].player.length;j++){
+		// 			if(player.id === exports.games[i].player[j].id){						
+		// 				return true;
+		// 			}
+		// 		}
+		// 	}
+		// }
+		return false;
+    },
+	
 
 
 	// create a new Game with 'gameId'
@@ -212,7 +232,9 @@ exports.gameManager = {
 	startGame: function(gameId) {
 		var game = exports.gameManager.getGame(gameId);
 		for (var x in game.player) {
+			game.player[x].canStart = false;
 			game.player[x].canDrawRandomCard = true;
+			game.state=exports.Game.WAITING_FOR_PLAYERS_TO_DRAW_CARD;
 		}
 
 	},
