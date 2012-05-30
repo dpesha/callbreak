@@ -80,21 +80,20 @@ io.sockets.on('connection', function(socket) {
   var sessionId = socket.handshake.session.sessionid;
   console.log("New Session Established:" + sessionId);
 
-  // var session = {
-  //   userid: '',
-  //   sessionid: sessionId,
-  //   ws: socket
-  // }
+   var session = {
+     userid: '',
+     sessionid: sessionId,
+     ws: socket
+   }
 
   socket.on('newuser', function(userid) {
-    // session.userid = userid;
-    var player = new Cb.Player(userid);
-    player.socket=socket;
+    session.userid = userid;
+    var player = new Cb.Player(userid);    
     player.joinGame(sessionId);
 
-    //sessions.push(session);
+    sessions.push(session);
     SessionManager.sendMessage(sessionId, Message.createMessage('chat', userid + ' just joined in.'));
-    SessionManager.sendMessage(sessionId, Message.createMessage('userupdate', SessionManager.getUsersList(sessionId)));
+    SessionManager.sendMessage(sessionId, Message.createMessage('userupdate', SessionManager.getGame(sessionId)));
   });
 
   socket.on('newgame', function(message) {
@@ -167,13 +166,12 @@ var SessionManager = new function() {
 
 
     this.sendMessage = function(sessionId, message) {
-      for (var i = 0; i < Cb.games.length; i++) {
-        if (Cb.games[i].gameId == sessionId) {
-          for(var x in Cb.games[i].player){
-            Cb.games[i].player[x].socket.send(message);
-          }
+      for(var i=0;i<sessions.length;i++){
+        if(sessions[i].sessionid=sessionId){
+          sessions[i].ws.send(message);
         }
       }
+     
     }
 
     this.getSessionCount = function(sessionId) {
@@ -201,16 +199,11 @@ var SessionManager = new function() {
       //var match = 0;
       for (var i = 0; i < Cb.games.length; i++) {
         if (Cb.games[i].gameId == sessionId) {
-          for(var x in Cb.games[i].player){
-            usersList.push(Cb.games[i].player[x].id);
-          }
-          // for(var x in Cb.games[i].player){
-          //  usersList[match] = Cb.games[i].player[x].id;
-          //   match++;
-          // }
+          for(var x in Cb.games[i].player){            
+            usersList.push(Cb.games[i].player[x]);
+          }          
         }
       }
-
       return usersList;
     }
 
@@ -219,8 +212,15 @@ var SessionManager = new function() {
       for (var i = 0; i < sessions.length; i++) {
         sessionsList.push(sessions[i].sessionid);
       }
-
       return sessionsList;
+    }
+
+    this.getGame = function(sessionId) {            
+      for (var i = 0; i < Cb.games.length; i++) {
+        if (Cb.games[i].gameId == sessionId) {            
+            return Cb.games[i];
+          }          
+      }
     }
   }
 
@@ -327,7 +327,7 @@ var Message = {
     var msg = {
       type: type,
       message: message
-    };
+    };     
     return JSON.stringify(msg);
   },
   parseMessage: function(message) {

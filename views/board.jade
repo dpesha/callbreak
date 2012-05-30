@@ -3,11 +3,9 @@ html
   head
     link(rel='stylesheet', type='text/css', href='/stylesheets/cards.css', media='screen')
     link(rel='stylesheet', type='text/css', href='/stylesheets/layout.css', media='screen')
-    script(src='/javascripts/libs/jquery-1.7.2.min.js')
-    script(type='text/javascript', src='/javascripts/client.js')
-    script(type='text/javascript', src='/socket.io/socket.io.js')        
-    script(src='/javascripts/libs/ember-0.9.7.1.min.js')
-    script(src='/javascripts/app.js')
+    script(src='/javascripts/libs/jquery-1.7.2.min.js')    
+    script(type='text/javascript', src='/javascripts/client.js')    
+    script(type='text/javascript', src='/socket.io/socket.io.js')               
   body
     #popup
       #popupContent
@@ -15,20 +13,20 @@ html
         br
         input#userid(type='text')(value='Your Name')(autofocus)
     #header
-    #menu
-      a#newgame(href='#') New Game
+    #menu     
+      a#start(href='#') Start
       a#shuffle(href='#') Shuffle
-      a#distribute(href='#') Distribute               
+      a#distribute(href='#') Distribute
     #content
       #col-left
         #board.playingCards.faceImages
           #player4
             ul.hand
-            .name 
+            .name Player4
           #center  
             #player3
               ul.hand
-              .name 
+              .name Player3
             #mid
               #round
                 ul#roundtable.deck
@@ -57,24 +55,21 @@ html
                   li
                     div.card.back *
                   li
-                    div.card.back *                  
-       
+                    div.card.back *
             #player1
               ul.hand
-              .name               
+              .name Player1                
           #player2
             ul.hand
-            .name 
+            .name Player2
       #col-right
-        #pointtable
-          script(type="text/x-handlebars")
+        #pointtable          
             table            
               tr                            
-                {{#each Callbreak.pointTableController}}
-                {{#view Callbreak.pointTableView playerBinding="this"}}
-                {{player.getId}}            
-                {{/view}}
-                {{/each}}
+                th Player1
+                th Player2
+                th Player3
+                th Player4
               tr
                 td 0
                 td 0

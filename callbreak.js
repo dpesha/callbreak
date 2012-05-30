@@ -4,8 +4,8 @@ exports.games = [];
 
 exports.Player = function(name) {
 	this.id = name;
-	name = name;
-	gameId = '';
+	this.name = name;
+	this.gameId = '';
 	this.position = 0;
 	this.turn = 0;
 	this.cards = [];
@@ -18,9 +18,7 @@ exports.Player = function(name) {
 	this.canShuffle = false;
 	this.canDeal = false;
 	this.canBid = false;
-	this.canTrick = false;
-
-	this.socket=null;
+	this.canTrick = false;	
 
 	this.joinGame = function(gameId) {
 		this.gameId = gameId;

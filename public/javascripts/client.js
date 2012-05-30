@@ -43,40 +43,43 @@ var Server = {
       User.setUserid(userid);
       socket.on('message', function(message) {
         var parsed = Message.parseMessage(message);
+        
         switch (parsed.type) {
         case 'chat':
           $('#messages').prepend(parsed.message);
           $('#messages').prepend("<hr>");
           break;
         case 'userupdate':
-          //var tableHeader = $('#pointtable > table > tbody> tr > th');
-          var usersList = parsed.message.slice(0);
-
-          for (var i = 0; i < parsed.message.length; i++) {            
-            Callbreak.playerController.objectAt(i).setId(parsed.message[i]); 
-            Callbreak.pointTableController.objectAt(i).setId(parsed.message[i]);           
-          }
-
+          var tableHeader = $('#pointtable > table > tbody> tr > th');
+          var usersList = ['Player1','Player2','Player3','Player4'];
         
-          /* Rotate table*/
-          for (var i = 0; i < parsed.message.length; i++) {
-            if (parsed.message[i] == User.getUserid()) {
-              for(var j = 0; j < i ; j++) {
-                var a= Callbreak.playerController.shiftObject();             
-                Callbreak.playerController.pushObject(a);
-              }   
+          for (var i = 0; i < parsed.message.player.length; i++) {
+             usersList[i]=parsed.message.player[i].id;            
+          }         
+
+          /* Rotate table */
+          for (var i = 0; i < parsed.message.player.length; i++) {              
+            if (parsed.message.player[i].id == User.getUserid()) {
+              usersList.rotate(i);
               break;
             }
           }
+          
+          for (var i = 0; i < usersList.length; i++) {            
+            tableHeader.eq(i).text(usersList[i]);
+            $('#player' + (i + 1) + ' > .name').text(usersList[i]);
+          }
 
-          // for (var j = 0; j < tableHeader.size(); j++) {
-          //   for (var i = 0; i < parsed.message.length; i++) {
-          //     tableHeader.eq(i).text(parsed.message[i]);
-          //     $('#player' + (i + 1) + ' > .name').text(usersList[i]);
-          //   }
-          // }
-
-          Callbreak.Status.setMessage('Waiting for other ' + (4-parsed.message.length) + " player to join");
+          
+          if(parsed.message.player.length == 1){
+            angular.injector(['ng']).invoke(function($rootScope,$controller) {
+              var scope = $rootScope.$new();
+              $controller(MenuCntl, {$scope: scope});             
+              scope.$apply(function(){
+                this.show=true;
+              });
+            });
+          }                              
           break;
         case 'newgame':
           $('#shuffle').show();
@@ -190,10 +193,10 @@ $(document).ready(function() {
   loadPopup();
   $('#userid').focus();
 
-  $('#distribute').hide();
+  $('#distribute').hide();   
 
   // new game
-  $('#newgame').bind('click', function() {
+  $('#start').bind('click', function() {
     server.emit('newgame', User.getUserid() + ' stared a new game.');
   });
 
