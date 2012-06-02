@@ -10,11 +10,12 @@ exports.Player = function(name) {
 	this.turn = 0;
 	this.cards = [];
 	this.playedTricks = [];
-	this.wonTricks = 0;
+	this.bid=0;
+	this.wonTricks = 0;	
 
 	/* player status flags*/
 	this.canStart = false;
-	this.canDrawRandomCard = false;
+	this.canDraw = false;
 	this.canShuffle = false;
 	this.canDeal = false;
 	this.canBid = false;
@@ -38,10 +39,11 @@ exports.Player = function(name) {
 	}
 	this.drawRandomCard = function(index) {
 
-		if (this.canDrawRandomCard) {
-			card: exports.gameManager.drawRandomCard(this);
-			this.canDrawRandomCard = false;
+		if (this.canDraw) {
+			var card = exports.gameManager.drawRandomCard(this,index);
+			this.canDraw = false;
 			exports.gameManager.decideGameCourse(this.gameId);
+			return card;
 		}
 	}
 
@@ -59,6 +61,7 @@ exports.Player = function(name) {
 
 	this.bidTricks = function(point) {
 		if (this.canBid) {
+			this.bid=point;
 			exports.gameManager.bidTricks(point, this);
 			exports.gameManager.freezeBidding(this.gameId);
 			this.canBid = false;
@@ -100,8 +103,10 @@ exports.Game = function() {
 	exports.Game.WAITING_FOR_PLAYERS_TO_JOIN = 0;
 	exports.Game.PLAYER_QUOTA_REACHED = 1;
 	exports.Game.WAITING_FOR_PLAYERS_TO_DRAW_CARD = 2;
-	exports.Game.CAN_DEAL_CARD = 3;
+	exports.Game.WAITING_FOR_DEAL = 3;
 	exports.Game.WAITING_FOR_PLAYER_TO_BID = 4;
+	exports.Game.WAITING_FOR_PLAYER_TO_PLAYTRICK = 5;
+
 
 	this.state = exports.Game.WAITING_FOR_PLAYERS_TO_JOIN;
 	this.deck = null;
@@ -233,22 +238,23 @@ exports.gameManager = {
 		var game = exports.gameManager.getGame(gameId);
 		for (var x in game.player) {
 			game.player[x].canStart = false;
-			game.player[x].canDrawRandomCard = true;
+			game.player[x].canDraw = true;
 			game.state=exports.Game.WAITING_FOR_PLAYERS_TO_DRAW_CARD;
 		}
+		exports.gameManager.shuffleCards(gameId);
 
 	},
 
 	/* draw random card (part of cardforge) */
-	drawRandomCard: function(player) {
+	drawRandomCard: function(player,index) {
 
-		var game = exports.gameManager.getGame(player.gameId);
+		var game = exports.gameManager.getGame(player.gameId);			
 		var player_card = {
 			player: player.id,
-			card: game.deck.drawRandomCard()
+			card: game.deck.drawRandomCard(index)
 		};
 		game.draw.push(player_card);
-
+		return player_card.card.toString();
 
 	},
 
@@ -303,6 +309,7 @@ exports.gameManager = {
 					players[x].canDeal = true;
 				}
 			}
+			game.state=exports.Game.WAITING_FOR_DEAL;
 		}
 
 	},
@@ -342,14 +349,21 @@ exports.gameManager = {
 		// set current tricks to 0;
 		game.tricks = 0;
 
+		// update permission
+		for (var x in players) {
+			players[x].canShuffle = false;
+			players[x].canDeal = false;
+		}
+		game.state=exports.Game.WAITING_FOR_PLAYER_TO_BID;
+
 	},
 
 	bidTricks: function(point, player) {
 
-		var game = exports.gameManager.getGame(player.gameId);
+		var game = exports.gameManager.getGame(player.gameId);		
 		game.bids.push({
-			'player': player.id,
-			'bid': point
+			'position': player.position,
+			'point': point
 		});
 		exports.gameManager.setNextPlayerPermission(player, 'canBid');
 
@@ -393,7 +407,9 @@ exports.gameManager = {
 					players[x].canTrick = false;
 				}
 			}
+			game.state=exports.Game.WAITING_FOR_PLAYER_TO_PLAYTRICK;
 		}
+
 	},
 
 	playTrick: function(rank, suit, player) {
@@ -522,8 +538,9 @@ exports.gameManager = {
 					players[x].canTrick=false;
 				}
 
-				// increase the tricks count;
+				// increase round count;
 				game.round = game.round + 1;
+				game.bids = [];
 
 
 			}

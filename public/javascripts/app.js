@@ -30,15 +30,25 @@ $(document).ready(function() {
 	});
 	cview.show();
 
-	// initialize Game View
+	// initialize game View
 	var gview = new GameView(model, new GameController(model), {
 		'startButton': $('#start'),
 		'shuffleButton':$('#shuffle'),
 		'dealButton': $('#deal'),
 		'statusMessage': $('#statusMessage'),
-		'deck': $('#roundtable'),		
+		'deck': $('#roundtable'),
+		'players':[$('#player1'),$('#player2'),$('#player3'),$('#player4')],
+		'playersId': [$('#player1 > .name'),$('#player2 > .name'),$('#player3 > .name'),$('#player4 > .name')],
+		'tableHeader': $('#pointtable > table > tbody> tr > th'),
+		'round': $('#mid > #round'),
+
 	});
 	gview.init();
+
+	// initialize table view
+	var ptview = new PointTableView(model,new PointTableController(model),{
+		'table':$('#pointtable > table > tbody'),
+	});	
 
 	 /* Rotate Array */
   	Array.prototype.rotate = function(n) {

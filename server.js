@@ -106,25 +106,27 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('drawcard', function(index,message) {
-    player.drawRandomCard(index);
-    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));
+    var card = player.drawRandomCard(index);
+    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message+card));
     SessionManager.sendMessage(sessionId, Message.createMessage('drawcard', SessionManager.getGame(sessionId)));
   });
 
   socket.on('shuffle', function(message) {
-    Cards.shuffle();
-    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));
-    SessionManager.sendMessage(sessionId, Message.createMessage('cardshuffle', message));
+    player.shuffle();
+    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));    
   });
 
-  socket.on('distribute', function(message) {
-
+  socket.on('deal', function(message) {
+    player.deal();
     SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));
-    var sessionsList = SessionManager.getSessions(sessionId);
-    for (var i = 0; i < sessionsList.length; i++) {
-      sessionsList[i].ws.send(Message.createMessage('carddistribute', Cards.distribute()[i]));
+    SessionManager.sendMessage(sessionId, Message.createMessage('deal', SessionManager.getGame(sessionId)));    
+  });
 
-    }
+  socket.on('bidtricks', function(data,message) {
+    player.bidTricks(data.point);
+    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message + data.point));
+    SessionManager.sendMessage(sessionId, Message.createMessage('bidtricks', SessionManager.getGame(sessionId)));
+
   });
 
   socket.on('myturn', function(message) {
@@ -133,13 +135,7 @@ io.sockets.on('connection', function(socket) {
     SessionManager.sendMessage(sessionId, Message.createMessage('myturn', message));
 
   });
-
-  socket.on('pointtableupdate', function(message) {
-
-    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message.user + ' updaed points'));
-    SessionManager.sendMessage(sessionId, Message.createMessage('pointtableupdate', message));
-
-  });
+  
 
   socket.on('cleartable', function(message) {
 

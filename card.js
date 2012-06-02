@@ -2,6 +2,7 @@ exports.card = function(rank, suit) {
 
 	this.rank = rank;
 	this.suit = suit;
+	
 
 	var rank, suit, value;
 	var rankc, suitc;
@@ -90,7 +91,7 @@ exports.card = function(rank, suit) {
 		break;
 	case "H":
 		suit = "Hearts"
-		suits = "hearts";
+		suitc = "hearts";
 		break;
 	case "S":
 		suit = "Spades"
@@ -106,13 +107,13 @@ exports.card = function(rank, suit) {
 		if (rank == null || suit == null) return "";
 
 		return rank + " of " + suit;
-	}
+	};
 
 	this.toCSSString = function() {
 		if (rankc == null || suitc == null) return "";
 
 		return 'rank-' + rankc + ' ' + suitc;
-	}
+	};
 
 
 	this.getRank = function() {
@@ -121,11 +122,14 @@ exports.card = function(rank, suit) {
 
 	this.getSuit=function(){
 		return this.suit;
-	}
+	};
 
 	this.getValue = function() {
 		return value;
-	}
+	};
+
+	this.css=this.toCSSString();
+	this.suitc='&' + suitc + ';';
 
 }
 
@@ -181,11 +185,11 @@ exports.deck = function() {
 		
 	};
 
-	this.drawRandomCard =function(){
+	this.drawRandomCard =function(index){
 	
-			var a=Math.floor(Math.random() * (this.cards.length));		
-			var rtn=this.cards[a];
-			this.cards.splice(a,1);		
+			//var a=Math.floor(Math.random() * (this.cards.length));		
+			var rtn=this.cards[index];			
+			this.cards.splice(index,1);		
 			return rtn;
 	};
 
