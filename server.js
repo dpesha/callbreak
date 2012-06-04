@@ -1,7 +1,7 @@
 var express = require('express'),
   routes = require('./routes');
 var Cb=require('./callbreak');
-  
+var Card=require('./card');
 
 var app = module.exports = express.createServer();
 // session setup
@@ -111,6 +111,11 @@ io.sockets.on('connection', function(socket) {
     SessionManager.sendMessage(sessionId, Message.createMessage('drawcard', SessionManager.getGame(sessionId)));
   });
 
+  socket.on('reposition', function() {
+    player.rePosition();    
+    SessionManager.sendMessage(sessionId, Message.createMessage('reposition', SessionManager.getGame(sessionId)));
+  });
+
   socket.on('shuffle', function(message) {
     player.shuffle();
     SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));    
@@ -122,27 +127,32 @@ io.sockets.on('connection', function(socket) {
     SessionManager.sendMessage(sessionId, Message.createMessage('deal', SessionManager.getGame(sessionId)));    
   });
 
-  socket.on('bidtricks', function(data,message) {
-    player.bidTricks(data.point);
-    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message + data.point));
-    SessionManager.sendMessage(sessionId, Message.createMessage('bidtricks', SessionManager.getGame(sessionId)));
+  socket.on('bidtrick', function(data,message) {
+    player.bidTricks(data);
+    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message + data));
+    SessionManager.sendMessage(sessionId, Message.createMessage('bidtrick', SessionManager.getGame(sessionId)));
+  }); 
+
+  socket.on('playtrick', function(data, message) {
+    var cardCss = data.split(' ');   
+    var rank = cardCss[1].split('-')[1].toUpperCase()
+    var suit = cardCss[2].charAt(0).toUpperCase();    
+    player.playTrick(rank,suit);
+    var card=new Card.card(rank, suit).toString();
+    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message + card));
+    SessionManager.sendMessage(sessionId, Message.createMessage('playtrick', SessionManager.getGame(sessionId)));
 
   });
 
-  socket.on('myturn', function(message) {
-
-    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message.user + ' threw a card.'));
-    SessionManager.sendMessage(sessionId, Message.createMessage('myturn', message));
-
+  socket.on('nexthand', function() {
+    player.startNextHand();    
+    SessionManager.sendMessage(sessionId, Message.createMessage('nexthand', SessionManager.getGame(sessionId)));
   });
-  
 
-  socket.on('cleartable', function(message) {
-
-    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));
-    SessionManager.sendMessage(sessionId, Message.createMessage('cleartable', message));
-
-  });
+  socket.on('nextround', function() {
+    player.startNextRound();    
+    SessionManager.sendMessage(sessionId, Message.createMessage('nextround', SessionManager.getGame(sessionId)));
+  });      
 
   socket.on('message', function(message) {
     console.log('received: %s', message);
@@ -163,8 +173,6 @@ io.sockets.on('connection', function(socket) {
 
 app.listen(port, function() {
   console.log("Server listening on port %d in %s mode", app.address().port, app.settings.env);
-  Cards.init();
-
 });
 
 /*** Session Manager ***/
@@ -190,19 +198,8 @@ var SessionManager = new function() {
       return count;
     }
 
-    this.getSessions = function(sessionId) {
-      var sessionList = [];
-      for (var i = 0; i < sessions.length; i++) {
-        if (sessions[i].sessionid == sessionId) {
-          sessionList.push(sessions[i]);
-        }
-      }
-      return sessionList;
-    }
-
     this.getUsersList = function(sessionId) {
-      var usersList = [];
-      //var match = 0;
+      var usersList = [];      
       for (var i = 0; i < Cb.games.length; i++) {
         if (Cb.games[i].gameId == sessionId) {
           for(var x in Cb.games[i].player){            
@@ -211,15 +208,7 @@ var SessionManager = new function() {
         }
       }
       return usersList;
-    }
-
-    this.getCurrentSessions = function() {
-      var sessionsList = [];
-      for (var i = 0; i < sessions.length; i++) {
-        sessionsList.push(sessions[i].sessionid);
-      }
-      return sessionsList;
-    }
+    }    
 
     this.getGame = function(sessionId) {            
       for (var i = 0; i < Cb.games.length; i++) {
@@ -227,104 +216,6 @@ var SessionManager = new function() {
             return Cb.games[i];
           }          
       }
-    }
-  }
-
-var Cards = new function() {
-
-    this.cards = [];
-    this.init = function() {
-      // initalize cards
-      this.cards.push('rank-a diams');
-      this.cards.push('rank-2 diams');
-      this.cards.push('rank-3 diams');
-      this.cards.push('rank-4 diams');
-      this.cards.push('rank-5 diams');
-      this.cards.push('rank-6 diams');
-      this.cards.push('rank-7 diams');
-      this.cards.push('rank-8 diams');
-      this.cards.push('rank-9 diams');
-      this.cards.push('rank-10 diams');
-      this.cards.push('rank-j diams');
-      this.cards.push('rank-q diams');
-      this.cards.push('rank-k diams');
-      this.cards.push('rank-a spades');
-      this.cards.push('rank-2 spades');
-      this.cards.push('rank-3 spades');
-      this.cards.push('rank-4 spades');
-      this.cards.push('rank-5 spades');
-      this.cards.push('rank-6 spades');
-      this.cards.push('rank-7 spades');
-      this.cards.push('rank-8 spades');
-      this.cards.push('rank-9 spades');
-      this.cards.push('rank-10 spades');
-      this.cards.push('rank-j spades');
-      this.cards.push('rank-q spades');
-      this.cards.push('rank-k spades');
-      this.cards.push('rank-a clubs');
-      this.cards.push('rank-2 clubs');
-      this.cards.push('rank-3 clubs');
-      this.cards.push('rank-4 clubs');
-      this.cards.push('rank-5 clubs');
-      this.cards.push('rank-6 clubs');
-      this.cards.push('rank-7 clubs');
-      this.cards.push('rank-8 clubs');
-      this.cards.push('rank-9 clubs');
-      this.cards.push('rank-10 clubs');
-      this.cards.push('rank-j clubs');
-      this.cards.push('rank-q clubs');
-      this.cards.push('rank-k clubs');
-      this.cards.push('rank-a hearts');
-      this.cards.push('rank-2 hearts');
-      this.cards.push('rank-3 hearts');
-      this.cards.push('rank-4 hearts');
-      this.cards.push('rank-5 hearts');
-      this.cards.push('rank-6 hearts');
-      this.cards.push('rank-7 hearts');
-      this.cards.push('rank-8 hearts');
-      this.cards.push('rank-9 hearts');
-      this.cards.push('rank-10 hearts');
-      this.cards.push('rank-j hearts');
-      this.cards.push('rank-q hearts');
-      this.cards.push('rank-k hearts');
-      // shuffle cards
-      this.shuffle();
-    }
-
-
-    // shuffle the cards logically;
-    this.shuffle = function() {
-
-      var tmp, current, top = this.cards.length;
-
-      if (top) while (--top) {
-        current = Math.floor(Math.random() * (top + 1));
-        tmp = this.cards[current];
-        this.cards[current] = this.cards[top];
-        this.cards[top] = tmp;
-      }
-      //return this.cards;
-    }
-
-    // distribute the cards logically;
-    this.distribute = function() {
-      var player1 = [];
-      var player2 = [];
-      var player3 = [];
-      var player4 = [];
-      var distributedCards = [];
-
-      for (var i = 0; i < 52; i = i + 4) {
-        player1.push(this.cards[i]);
-        player2.push(this.cards[i + 1]);
-        player3.push(this.cards[i + 2]);
-        player4.push(this.cards[i + 3]);
-      }
-      distributedCards.push(player1);
-      distributedCards.push(player2);
-      distributedCards.push(player3);
-      distributedCards.push(player4);
-      return distributedCards;
     }
   }
 

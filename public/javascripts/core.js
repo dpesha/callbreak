@@ -8,20 +8,28 @@ var GameModel = function() {
 		this.player = null;
 		this.rPlayers = null;
 		this.uPlayers = null;
-		this.pPlayers = null;
-		this.state = 0;
+		this.pPlayers = null;		
 		this.round=0;
 		this.playerCount=0;
 		this.socket=null;			
+		this.statusMessage = "";
+		this.wonTricks=null;
 		this.playerJoined = new Event(this);
 		this.playerCouldnotJoin = new Event(this);
 		this.chatMessageReceived=new Event(this);
 		this.newGameStarted=new Event(this);
 		this.cardDrawn=new Event(this);		
-		this.positionDecided=new Event(this);
+		this.lastCardDrawn=new Event(this);
+		this.positionChanged=new Event(this);
 		this.cardsDealt=new Event(this);
 		this.bidPointUpdated=new Event(this);
-		this.bidComplete=new Event(this);
+		this.biddingCompleted=new Event(this);
+		this.trickPlayed=new Event(this);
+		this.lastTrickPlayed=new Event(this);
+		this.nextHandStarted=new Event(this);
+		this.roundCompleted=new Event(this);
+		this.lastHandPlayed=new Event(this);
+		this.nextRoundStarted=new Event(this);
 	}
 
 GameModel.prototype = {
@@ -40,6 +48,9 @@ GameModel.prototype = {
 	getRound:function(){
 		return this.round;
 	},
+	getWonTricks:function(){
+		return this.wonTricks;
+	},
 	getPermission:function(permission){		
 		switch(permission){
 			case 'start':
@@ -57,32 +68,16 @@ GameModel.prototype = {
 		}
 	},
 	getStatusMessage:function(){		
-		switch(this.state){
-			case 0:
-				return 'Waiting for other ' + (4 - this.playerCount) + ' player to join.';
-			break;
-			case 1:
-				return 'Player Quota reached, Start a Game by clicking start button.';
-			break;
-			case 2:
-				return 'Waiting for players to draw card';
-			break;
-			case 3:
-				return 'Player ' + this.uPlayers[0] + ' has strongest card. Waiting for Player ' + this.uPlayers[0] + ' to shuffle /deal card.';
-			break;
-			case 4:
-				return 'Waiting for players to bid';
-			break;
-			case 5:
-				return 'Waiting for players to play trick';
-			break;					
-		}
+		return this.statusMessage;
 	},	
 	sendMessage:function(message){
 		this.socket.send(Message.createMessage('chat', User.getUserid() + ':' + message));
 	},
 	startGame:function(){
 		this.socket.emit('newgame', User.getUserid() + ' started a new game.');
+	},
+	proceedGame:function(arg){
+		this.socket.emit(arg,'');
 	},
 	drawCard:function(index){
 		this.socket.emit('drawcard', index, User.getUserid() + ' drew card: ');
@@ -94,7 +89,10 @@ GameModel.prototype = {
 		this.socket.emit('deal', User.getUserid() + ' dealt cards.');
 	},
 	updateBid:function(data){
-		this.socket.emit('bidtricks', data, User.getUserid() + ' bid: ');
+		this.socket.emit('bidtrick', data, User.getUserid() + ' bid: ');
+	},
+	playTrick:function(data){
+		this.socket.emit('playtrick', data, User.getUserid() + ' played card: ');
 	},
 	joinPlayer: function(userid) {
 		var _this = this;
@@ -112,7 +110,8 @@ GameModel.prototype = {
 			_this.socket.on('message', function(message) {
 				var parsed = Message.parseMessage(message);
 				
-				_this.state=parsed.message.state;
+				_this.statusMessage=parsed.message.status;
+				_this.round=parsed.message.round;
 				// Assign Current Player
 				if(parsed.message.player!=undefined){
 					for (var i = 0; i < parsed.message.player.length; i++) {
@@ -125,38 +124,41 @@ GameModel.prototype = {
 
 				switch (parsed.type) {
 
-				case 'userupdate':					
-					_this.rPlayers = ['Player1', 'Player2', 'Player3', 'Player4'];
-					_this.uPlayers = ['Player1', 'Player2', 'Player3', 'Player4'];
-					_this.playerCount=parsed.message.player.length;
+					case 'userupdate':					
+						_this.rPlayers = ['Player1', 'Player2', 'Player3', 'Player4'];
+						_this.uPlayers = ['Player1', 'Player2', 'Player3', 'Player4'];
+						_this.playerCount=parsed.message.player.length;
 
-					for (var i = 0; i < parsed.message.player.length; i++) {
-						_this.rPlayers[i] = parsed.message.player[i].id;
-						_this.uPlayers[i] = parsed.message.player[i].id;						
-					}
-
-					/* Rotate Players List */
-					for (var i = 0; i < parsed.message.player.length; i++) {
-						if (parsed.message.player[i].id == User.getUserid()) {							
-							_this.rPlayers.rotate(i);
-							break;
+						for (var i = 0; i < parsed.message.player.length; i++) {
+							_this.rPlayers[i] = parsed.message.player[i].id;
+							_this.uPlayers[i] = parsed.message.player[i].id;						
 						}
-					}
-					_this.playerJoined.notify(this);
-					break;
-				case 'chat':
-					_this.chatMessageReceived.notify(parsed.message);
-					break;
-				case 'error':
-					_this.playerCouldnotJoin.notify("Opps! player already exists;");
-					break;
-				case 'newgame':
-					_this.newGameStarted.notify(this);
-					break;
-				case 'drawcard':
-					_this.cardDrawn.notify(parsed.message.draw);
-					if(parsed.message.draw.length==4){
 
+						/* Rotate Players List */
+						for (var i = 0; i < parsed.message.player.length; i++) {
+							if (parsed.message.player[i].id == User.getUserid()) {							
+								_this.rPlayers.rotate(i);
+								break;
+							}
+						}
+						_this.playerJoined.notify(this);
+					break;
+					case 'chat':
+						_this.chatMessageReceived.notify(parsed.message);
+					break;
+					case 'error':
+						_this.playerCouldnotJoin.notify("Opps! player already exists;");
+					break;
+					case 'newgame':
+						_this.newGameStarted.notify(this);
+					break;
+					case 'drawcard':
+						_this.cardDrawn.notify(parsed.message.draw);
+						if(parsed.message.draw.length==4){
+							_this.lastCardDrawn.notify(this);
+						}
+					break;
+					case 'reposition':
 						// re-position players 
 						_this.pPlayers=new Array(4);
 						for (var x in parsed.message.player){
@@ -171,20 +173,39 @@ GameModel.prototype = {
 								break;
 							}
 						}
-						_this.positionDecided.notify(this);
-					}
+						_this.positionChanged.notify(this);						
 					break;	
-				case 'deal':
-					_this.round=parsed.message.round;
-					_this.cardsDealt.notify(this);
-					break;
-				case 'bidtricks':					
-					_this.bidPointUpdated.notify(parsed.message.bids);
-					if(parsed.message.bids.length==4){
+					case 'deal':
 						
-					}
-					break;		
-				}
+						_this.cardsDealt.notify(this);
+					break;
+					case 'bidtrick':					
+						_this.bidPointUpdated.notify(parsed.message.bids);
+						if(parsed.message.bids.length==4){
+							_this.biddingCompleted.notify(this);
+						}
+					break;										
+					case 'playtrick':											
+						_this.trickPlayed.notify(parsed.message.hand);
+						_this.wonTricks=new Array(4);
+						for(var x in parsed.message.player){
+							_this.wonTricks[parsed.message.player[x].position] = parsed.message.player[x].wonTricks;
+						}
+						if(parsed.message.tricks==13){
+							_this.lastHandPlayed.notify(this);
+						} else {
+							if(parsed.message.hand.length==4){
+								_this.lastTrickPlayed.notify(this);
+							}
+						}						
+					break;
+					case 'nexthand':
+						_this.nextHandStarted.notify(this);							
+					break;
+					case 'nextround':
+						_this.nextRoundStarted.notify(this);						
+					break;								
+				}								
 			});
 		});		
 	}
@@ -280,7 +301,7 @@ PlayerView.prototype = {
 		// update point table header
 		var args=this.model.getUnrotatedPlayersList();
 		for (var i = 0; i < args.length; i++) {
-			e.tableHeader.eq(i).text(args[i]);
+			e.tableHeader.eq(i+1).text(args[i]);
 		}
 
 		var args=this.model.getRotatedPlayersList();
@@ -361,32 +382,61 @@ var GameView = function(model, controller, elements) {
 	var _this = this;
 	this.model.playerJoined.attach(function() {
 		_this.updatePermissions();
-	});
-	this.model.newGameStarted.attach(function() {
-		_this.updatePermissions();
+		_this.showStatusMessage();
 	});
 	this.model.newGameStarted.attach(function() {
 		_this.initCards();
-	});
+		_this.updatePermissions();
+		_this.showStatusMessage();
+	});	
 	this.model.cardDrawn.attach(function(sender,args){
 		_this.showDrawnCard(args);
+		_this.showStatusMessage();				
 	});
-	
-	this.model.positionDecided.attach(function(){
-		_this.updatePermissions();
-	});
-	this.model.positionDecided.attach(function(){
+	this.model.lastCardDrawn.attach(function(){
+		_this.proceedGame('reposition');
+		_this.showStatusMessage();		
+	});	
+	this.model.positionChanged.attach(function(){
 		_this.repositionPlayers();
-	});
-	this.model.cardsDealt.attach(function(){
 		_this.updatePermissions();
+		_this.showStatusMessage();
 	});
 	this.model.cardsDealt.attach(function(){
 		_this.distributeCards();
+		_this.updatePermissions();
+		_this.showStatusMessage();
 	});
 	this.model.bidPointUpdated.attach(function(){
 		_this.updatePermissions();
-	});		
+		_this.showStatusMessage();
+	});
+	this.model.biddingCompleted.attach(function(){
+		_this.enableTrickPlay();
+	});	
+	this.model.trickPlayed.attach(function(sender,args){
+		_this.updateTrick(args);
+		_this.enableTrickPlay();
+		_this.updatePermissions();
+		_this.showStatusMessage();
+	});
+	this.model.lastTrickPlayed.attach(function(){
+		_this.proceedGame('nexthand');
+		_this.showStatusMessage();
+	});
+	this.model.nextHandStarted.attach(function(){
+		_this.enableNextHand();
+		_this.showStatusMessage();		
+	});
+	this.model.lastHandPlayed.attach(function(){
+		_this.proceedGame('nextround');
+		_this.showStatusMessage();
+	});
+	this.model.nextRoundStarted.attach(function(){
+		_this.completeRound();
+		_this.updatePermissions();
+		_this.showStatusMessage();		
+	});			
 
 };
 
@@ -403,6 +453,7 @@ GameView.prototype = {
 		e.dealButton.click(function() {
 			_this.controller.dealCard();			
 		});
+		
 	},
 	updatePermissions: function() {
 		var e = this.elements;
@@ -410,8 +461,10 @@ GameView.prototype = {
 		// update button permission
 		e.startButton.toggle(this.model.getPermission('start'));
 		e.shuffleButton.toggle(this.model.getPermission('shuffle'));
-		e.dealButton.toggle(this.model.getPermission('deal'));
-
+		e.dealButton.toggle(this.model.getPermission('deal'));		
+	},
+	showStatusMessage:function(){
+		var e=this.elements;
 		//update Status message
 		e.statusMessage.html('# ' + this.model.getStatusMessage());	
 	},
@@ -444,7 +497,7 @@ GameView.prototype = {
 		}
 		// padding adjustment TODO:move this manual adjustment to CSS
 		e.players[1].css('padding-top', '12%');
-        e.players[3].css('padding-top', '12%');         
+        e.players[3].css('padding-top', '12%');                
 
 	},
 	repositionPlayers:function(){
@@ -452,7 +505,7 @@ GameView.prototype = {
 		// update point table header
 		var args=this.model.getUnrotatedPlayersList();
 		for (var i = 0; i < args.length; i++) {
-			e.tableHeader.eq(i).text(args[i]);			
+			e.tableHeader.eq(i+1).text(args[i]);			
 		}
 
 		// update player name
@@ -464,7 +517,9 @@ GameView.prototype = {
 		// remove cards
 		for(var i=0;i<e.players.length;i++){
 			e.players[i].children('ul.hand').children('li').remove();			
-		}		
+		}
+		// hide proceed button
+		e.proceedButton.hide();		
 	},
 	distributeCards:function(){
 		var e=this.elements;
@@ -486,7 +541,63 @@ GameView.prototype = {
 	    <div><div class="player4"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
 	    <div class="player2"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>\
 	    <div class="player1"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>'); 
-	}
+	},
+	enableTrickPlay:function(){
+		var e=this.elements;
+		var _this=this;		
+		if(_this.model.getPlayer().canTrick){
+			e.players[0].children('ul.hand').children('li').children('a').bind('click', function() {	            
+	            _this.controller.playTrick($(this).prop('class'));
+	            e.players[0].children('ul.hand').children('li').children('a').unbind('click');
+          	});
+		}
+	},
+	updateTrick:function(args){
+		var e=this.elements;
+		var _this=this;
+		var arg=args[args.length-1];		
+		var player = $('.name:contains(' + arg.user + ')').parent();
+		var id=player.prop('id');
+        var cardOnTable = $('div.' + id).children('div');
+        cardOnTable.removeClass();
+        cardOnTable.addClass('card '+ arg.card.css);        
+        cardOnTable.children('span.rank').html(arg.card.rank);
+        cardOnTable.children('span.suit').html(arg.card.suitc);
+        
+	    // hide played card
+	    player.children('ul').children('li').children('a.' + arg.card.css.replace(/ /g, '.')).hide();
+	    player.children('ul').children('li').eq(0).children('div').remove();
+
+	},
+	enableNextHand:function(){		
+		var target = $('div[class^="player"]').children('div');		
+        target.removeClass();
+        target.addClass('card');
+        target.children('span.rank').html('');
+        target.children('span.suit').html('');
+
+        // hide proceed button
+		this.elements.proceedButton.hide();	
+	},
+	proceedGame:function(args){
+		var e=this.elements;
+		var _this=this;
+		e.proceedButton.show();
+		e.proceedButton.unbind('click');				
+		e.proceedButton.bind('click',function() {
+			_this.controller.proceedGame(args);						
+		});
+	},
+	completeRound:function(){
+		var e=this.elements;		
+
+		// remove cards
+		for(var i=0;i<e.players.length;i++){
+			e.players[i].children('ul.hand').children('li').remove();			
+		}
+		e.round.children("#roundtable").remove();
+		e.proceedButton.hide();	
+	},
 };
 
 /**************************
@@ -509,9 +620,12 @@ GameController.prototype = {
 	dealCard:function(){
 		this.model.dealCard();
 	},	
-	playTrick:function(){
-
+	playTrick:function(message){
+		this.model.playTrick(message);
 	},
+	proceedGame:function(args){
+		this.model.proceedGame(args);
+	}
 
 };
 
@@ -528,11 +642,18 @@ var PointTableView = function(model, controller, elements) {
 		_this.enableBidding();
 	});
 	this.model.bidPointUpdated.attach(function(sender,args){
+		_this.enableBidding();
 		_this.updateBidPoint(args);
 	});
-	this.model.bidPointUpdated.attach(function(sender,args){
-		_this.enableBidding();
-	});			
+	this.model.lastTrickPlayed.attach(function(sender,args){
+		_this.showRoundStatus();
+	});
+	this.model.lastHandPlayed.attach(function(sender,args){
+		_this.showRoundStatus();
+	});		
+	this.model.nextRoundStarted.attach(function(sender,args){
+		_this.completeRound();
+	});	
 
 };
 
@@ -542,8 +663,10 @@ PointTableView.prototype = {
 		var _this=this;
 		
 		if(_this.model.getPlayer().canBid){
-			var td= e.table.children().eq(this.model.getRound()+1).children().eq(this.model.getPlayer().position);
+			var td= e.table.children().eq(this.model.getRound()+1).children().eq(this.model.getPlayer().position+1);
 			td.attr('contenteditable', 'true');
+			var cellHighlight=setInterval(function(){
+				td.toggleClass("cell-background")},1000);
 			td.keydown(function(event) {
     			var esc = event.which == 27,
       			nl = event.which == 13,
@@ -556,18 +679,14 @@ PointTableView.prototype = {
 			        document.execCommand('undo');
 			        el.blur();
 
-			      } else if (nl) {
-			        // send changed cell data to server
-			        var message = {			          
-			          col: $(this).parent().children().index($(this)),
-			          row: $(this).parent().parent().children().index($(this).parent()),
-			          point: $(this).html()
-			        };
-			        _this.controller.updateBid(message);
+			      } else if (nl) {			              
+			        _this.controller.updateBid($(this).html());
 
 			        el.blur();
 			        event.preventDefault();
 			        td.removeAttr('contenteditable');
+			        td.removeClass("cell-background");
+			        clearInterval(cellHighlight);
 			      }
 			    }
 			  });
@@ -576,8 +695,23 @@ PointTableView.prototype = {
 	updateBidPoint:function(args){		
 		var e=this.elements;
 		var arg=args[args.length-1];
-        e.table.children().eq(this.model.getRound()+1).children().eq(arg.position).html(arg.point);
+        e.table.children().eq(this.model.getRound()+1).children().eq(arg.position+1).html(arg.point);
 	},
+	showRoundStatus:function(args){
+		var e= this.elements;
+		var wonTricks=this.model.getWonTricks();
+		for(var i=0;i<wonTricks.length;i++){			
+			e.table.children().eq(this.model.getRound()+2).children().eq(i+1).html(wonTricks[i]);
+		}		
+	},
+	completeRound:function(args){
+		var e=this.elements;
+
+		// TODO: update previous round won tricks & reset CR to 0;		
+		var cr1 = e.table.children().eq(this.model.getRound()+1);
+		e.table.children().eq(this.model.getRound()+2).after(cr1);
+
+	}
 };
 
 /**************************

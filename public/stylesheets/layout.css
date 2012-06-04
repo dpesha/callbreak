@@ -35,7 +35,8 @@ th {
 
 #start,
 #shuffle,
-#deal {
+#deal,
+#proceed {
     background-color:#444;	
     display:inline-block;
     font-size:24px;
@@ -193,4 +194,15 @@ th {
   border:1px solid #cecece;  
   z-index:1;  
 } 
+
+.cell-background
+ { 
+  background-color: #2EFE64; 
+ }
+
+ .current-round td
+ { 
+  background-color: #A9F5D0; 
+ }​
+​
 

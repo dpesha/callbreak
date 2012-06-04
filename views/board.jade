@@ -20,6 +20,7 @@ html
       a#start(href='#') Start
       a#shuffle(href='#') Shuffle
       a#deal(href='#') Deal
+      a#proceed(href='#') Proceed
     #content
       #col-left
         #board.playingCards.faceImages
@@ -147,41 +148,49 @@ html
         #pointtable          
             table            
               tr                            
+                th
                 th Player1
                 th Player2
                 th Player3
                 th Player4
               tr
+                td R1
+                td 0
+                td 0
+                td 0
+                td 0              
+              tr(class='current-round')
+                td CR
                 td 0
                 td 0
                 td 0
                 td 0
               tr
+                td R2
                 td 0
                 td 0
                 td 0
                 td 0
               tr
+                td R3
                 td 0
                 td 0
                 td 0
                 td 0
               tr
+                td R4
+                td 0
+                td 0
+                td 0
+                td 0                            
+              tr
+                td R5
                 td 0
                 td 0
                 td 0
                 td 0
               tr
-                td(style="font-weight:bold;") 0                
-                td(style="font-weight:bold;") 0
-                td(style="font-weight:bold;") 0
-                td(style="font-weight:bold;") 0               
-              tr
-                td 0
-                td 0
-                td 0
-                td 0
-              tr
+                td SUM
                 td(style="font-weight:bold;") 0                
                 td(style="font-weight:bold;") 0
                 td(style="font-weight:bold;") 0
@@ -190,6 +199,6 @@ html
           #messages            
           input#messageText type=text
     #footer                 
-    #statusMessage
+    #statusMessage     
     #backgroundPopup
   

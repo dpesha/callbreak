@@ -35,6 +35,7 @@ $(document).ready(function() {
 		'startButton': $('#start'),
 		'shuffleButton':$('#shuffle'),
 		'dealButton': $('#deal'),
+		'proceedButton': $('#proceed'),
 		'statusMessage': $('#statusMessage'),
 		'deck': $('#roundtable'),
 		'players':[$('#player1'),$('#player2'),$('#player3'),$('#player4')],
@@ -55,6 +56,8 @@ $(document).ready(function() {
     	this.unshift.apply(this, this.splice(n, this.length))
     	return this;
   	}
+
+  	$('#proceed').hide();
 
 });
 
