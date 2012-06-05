@@ -1,5 +1,7 @@
 var ws_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, 'ws$2');
 var http_host = window.location.href.replace(/(http|https)(:\/\/[^\/]*)(\/.*)/, 'http$2');
+var number = /^[1-9][0-3]?$/;
+
 
 /**************************
  * Model
@@ -679,14 +681,17 @@ PointTableView.prototype = {
 			        document.execCommand('undo');
 			        el.blur();
 
-			      } else if (nl) {			              
-			        _this.controller.updateBid($(this).html());
+			      } else if (nl) {
+				      	if(number.test($(this).html())){
 
-			        el.blur();
-			        event.preventDefault();
-			        td.removeAttr('contenteditable');
-			        td.removeClass("cell-background");
-			        clearInterval(cellHighlight);
+					        _this.controller.updateBid($(this).html());					        
+					        
+					        td.removeAttr('contenteditable');
+					        td.removeClass("cell-background");
+					        clearInterval(cellHighlight);
+					    }
+					    el.blur();
+					    event.preventDefault();
 			      }
 			    }
 			  });
@@ -707,9 +712,23 @@ PointTableView.prototype = {
 	completeRound:function(args){
 		var e=this.elements;
 
-		// TODO: update previous round won tricks & reset CR to 0;		
-		var cr1 = e.table.children().eq(this.model.getRound()+1);
-		e.table.children().eq(this.model.getRound()+2).after(cr1);
+		var pr = e.table.children().eq(this.model.getRound());		
+		var cr = e.table.children().eq(this.model.getRound()+1);
+		for(var i=0;i<pr.children.size();i++){
+
+			var a=parseInt(pr.children.eq(i).html());
+			var b=parseInt(cr.children.eq(i).html());
+			
+			if(a < b ) {
+				pr.children.eq(i).html(a +'.' + (b-a));
+			} else if (a > b){
+				pr.children.eq(i).html(a * -1);
+			} 
+			cr.children.eq(i).html('0');
+
+		}
+
+		e.table.children().eq(this.model.getRound()+2).after(cr);
 
 	}
 };

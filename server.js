@@ -161,13 +161,14 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
     console.log("Session Disconnected:" + sessionId + ',User:' + session.userid);
+    player.leaveGame();
     for (var i = 0; i < sessions.length; i++) {
       if (sessions[i].ws == socket) {
         sessions.splice(i, 1);
       }
     }
     SessionManager.sendMessage(sessionId, Message.createMessage('chat', session.userid + ' left the room.'));
-    SessionManager.sendMessage(sessionId, Message.createMessage('userupdate', SessionManager.getUsersList(sessionId)));
+    SessionManager.sendMessage(sessionId, Message.createMessage('userupdate', SessionManager.getGame(sessionId)));
   });
 });
 
@@ -196,19 +197,7 @@ var SessionManager = new function() {
         }
       }
       return count;
-    }
-
-    this.getUsersList = function(sessionId) {
-      var usersList = [];      
-      for (var i = 0; i < Cb.games.length; i++) {
-        if (Cb.games[i].gameId == sessionId) {
-          for(var x in Cb.games[i].player){            
-            usersList.push(Cb.games[i].player[x]);
-          }          
-        }
-      }
-      return usersList;
-    }    
+    }   
 
     this.getGame = function(sessionId) {            
       for (var i = 0; i < Cb.games.length; i++) {
