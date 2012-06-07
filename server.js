@@ -111,7 +111,7 @@ io.sockets.on('connection', function(socket) {
     SessionManager.sendMessage(sessionId, Message.createMessage('drawcard', SessionManager.getGame(sessionId)));
   });
 
-  socket.on('reposition', function() {
+  socket.on('reposition', function() {    
     player.rePosition();    
     SessionManager.sendMessage(sessionId, Message.createMessage('reposition', SessionManager.getGame(sessionId)));
   });
@@ -152,7 +152,13 @@ io.sockets.on('connection', function(socket) {
   socket.on('nextround', function() {
     player.startNextRound();    
     SessionManager.sendMessage(sessionId, Message.createMessage('nextround', SessionManager.getGame(sessionId)));
-  });      
+  });
+
+  socket.on('redeal', function(message) {
+    player.requestRedeal();
+    SessionManager.sendMessage(sessionId, Message.createMessage('chat', message));       
+    SessionManager.sendMessage(sessionId, Message.createMessage('redeal', SessionManager.getGame(sessionId)));
+  });       
 
   socket.on('message', function(message) {
     console.log('received: %s', message);

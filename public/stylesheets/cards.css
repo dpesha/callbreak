@@ -382,18 +382,18 @@
 
 /* hand */
 .playingCards ul.hand li:nth-child(1)  { left: 0; }
-.playingCards ul.hand li:nth-child(2)  { left: 1.1em; }
-.playingCards ul.hand li:nth-child(3)  { left: 2.2em; }
-.playingCards ul.hand li:nth-child(4)  { left: 3.3em; }
-.playingCards ul.hand li:nth-child(5)  { left: 4.4em; }
-.playingCards ul.hand li:nth-child(6)  { left: 5.5em; }
-.playingCards ul.hand li:nth-child(7)  { left: 6.6em; }
-.playingCards ul.hand li:nth-child(8)  { left: 7.7em; }
-.playingCards ul.hand li:nth-child(9)  { left: 8.8em; }
-.playingCards ul.hand li:nth-child(10) { left: 9.9em; }
-.playingCards ul.hand li:nth-child(11) { left: 11.6em; }
-.playingCards ul.hand li:nth-child(12) { left: 12.6em; }
-.playingCards ul.hand li:nth-child(13) { left: 13.9em; }
+.playingCards ul.hand li:nth-child(2)  { left: 1.5em; }
+.playingCards ul.hand li:nth-child(3)  { left: 3.0em; }
+.playingCards ul.hand li:nth-child(4)  { left: 4.5em; }
+.playingCards ul.hand li:nth-child(5)  { left: 6.0em; }
+.playingCards ul.hand li:nth-child(6)  { left: 7.5em; }
+.playingCards ul.hand li:nth-child(7)  { left: 9.0em; }
+.playingCards ul.hand li:nth-child(8)  { left: 10.5em; }
+.playingCards ul.hand li:nth-child(9)  { left: 12.0em; }
+.playingCards ul.hand li:nth-child(10) { left: 13.5em; }
+.playingCards ul.hand li:nth-child(11) { left: 15.0em; }
+.playingCards ul.hand li:nth-child(12) { left: 16.5em; }
+.playingCards ul.hand li:nth-child(13) { left: 18.0em; }
 
 /* deck */
 .playingCards ul.deck li:nth-child(1)  { left: 0;    }

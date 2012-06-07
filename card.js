@@ -5,7 +5,7 @@ exports.card = function(rank, suit) {
 	
 
 	var rank, suit, value;
-	var rankc, suitc;
+	var rankc, suitc, suitv;
 
 	switch (this.rank) {
 	case "A":
@@ -83,23 +83,28 @@ exports.card = function(rank, suit) {
 	switch (this.suit) {		
 	case "C":
 		suit = "Clubs";
-		suitc = "clubs";		
+		suitc = "clubs";
+		suitv = 2;		
 		break;
 	case "D":
 		suit = "Diamonds"
 		suitc = "diams";
+		suitv = 1;
 		break;
 	case "H":
 		suit = "Hearts"
 		suitc = "hearts";
+		suitv = 3;
 		break;
 	case "S":
 		suit = "Spades"
 		suitc = "spades";
+		suitv = 4;
 		break;
 	default:
 		suit = null;
 		suitc = null;
+		suitv = null;
 		break;
 	}
 
@@ -126,6 +131,10 @@ exports.card = function(rank, suit) {
 
 	this.getValue = function() {
 		return value;
+	};
+
+	this.getSuitValue = function() {
+		return suitv;
 	};
 
 	this.css=this.toCSSString();

@@ -32,6 +32,7 @@ var GameModel = function() {
 		this.roundCompleted=new Event(this);
 		this.lastHandPlayed=new Event(this);
 		this.nextRoundStarted=new Event(this);
+		this.redealRequested=new Event(this);
 	}
 
 GameModel.prototype = {
@@ -89,6 +90,9 @@ GameModel.prototype = {
 	},
 	dealCard:function(){
 		this.socket.emit('deal', User.getUserid() + ' dealt cards.');
+	},
+	requestRedeal:function(){
+		this.socket.emit('redeal', User.getUserid() + ' requested redeal.');
 	},
 	updateBid:function(data){
 		this.socket.emit('bidtrick', data, User.getUserid() + ' bid: ');
@@ -187,8 +191,8 @@ GameModel.prototype = {
 							_this.biddingCompleted.notify(this);
 						}
 					break;										
-					case 'playtrick':											
-						_this.trickPlayed.notify(parsed.message.hand);
+					case 'playtrick':
+						
 						_this.wonTricks=new Array(4);
 						for(var x in parsed.message.player){
 							_this.wonTricks[parsed.message.player[x].position] = parsed.message.player[x].wonTricks;
@@ -197,7 +201,9 @@ GameModel.prototype = {
 							_this.lastHandPlayed.notify(this);
 						} else {
 							if(parsed.message.hand.length==4){
-								_this.lastTrickPlayed.notify(this);
+								_this.lastTrickPlayed.notify(parsed.message.hand);
+							} else {
+								_this.trickPlayed.notify(parsed.message.hand);		
 							}
 						}						
 					break;
@@ -206,6 +212,9 @@ GameModel.prototype = {
 					break;
 					case 'nextround':
 						_this.nextRoundStarted.notify(this);						
+					break;
+					case 'redeal':
+						_this.redealRequested.notify(parsed.message.shownCard);						
 					break;								
 				}								
 			});
@@ -422,7 +431,8 @@ var GameView = function(model, controller, elements) {
 		_this.updatePermissions();
 		_this.showStatusMessage();
 	});
-	this.model.lastTrickPlayed.attach(function(){
+	this.model.lastTrickPlayed.attach(function(sender,args){
+		_this.updateTrick(args);		
 		_this.proceedGame('nexthand');
 		_this.showStatusMessage();
 	});
@@ -438,7 +448,14 @@ var GameView = function(model, controller, elements) {
 		_this.completeRound();
 		_this.updatePermissions();
 		_this.showStatusMessage();		
-	});			
+	});
+
+	this.model.redealRequested.attach(function(sender,args){
+		_this.requestRedeal(args);
+		_this.updatePermissions();
+		_this.showStatusMessage();			
+	});
+
 
 };
 
@@ -529,6 +546,7 @@ GameView.prototype = {
 
 		// clear deck
 		e.deck.remove();
+		this.completeRound();
 
 		// distribute cards
 		var player=this.model.getPlayer();
@@ -538,16 +556,38 @@ GameView.prototype = {
 			}
 			e.players[0].children('ul.hand').append('<li ><a class="card ' + player.cards[i].css + '" href="#" ><span class="rank">' + player.cards[i].rank + '</span><span class="suit">' + player.cards[i].suitc + '</span></a></li>');
         }
+
+        // secret link to show card to request for redeal
+        e.players[0].children('ul.hand').children('li:nth-child(1)').children('a').bind('click', function() {
+        	var r=confirm("Do you really want to request for redaeal?? Cards will be visible to other players!")	            
+            if(r){
+            	_this.controller.requestRedeal();
+            	e.players[0].children('ul.hand').children('li:nth-child(1)').children('a').unbind('click');
+            }
+	    });
                 
 	    e.round.append('<div id="roundtable"><div class="player3"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
 	    <div><div class="player4"><div class="card"><span class="rank"></span><span class="suit"></span></div></div>\
 	    <div class="player2"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>\
 	    <div class="player1"><div class="card"><span class="rank"></span><span class="suit"></span></div></div></div>'); 
 	},
+	requestRedeal:function(args){
+		var e=this.elements;					
+		for(var i=0;i<e.players.length;i++){
+			if(args.player === e.playersId[i].html()){
+				e.players[i].children('ul.hand').children('li').remove();
+				for(var j=0;j<args.cards.length;j++){
+					e.players[i].children('ul.hand').append('<li ><a class="card ' + args.cards[j].css + '" href="#" ><span class="rank">' + args.cards[j].rank + '</span><span class="suit">' + args.cards[j].suitc + '</span></a></li>');
+				}				
+				break;
+			}
+		}
+	},	
 	enableTrickPlay:function(){
 		var e=this.elements;
 		var _this=this;		
 		if(_this.model.getPlayer().canTrick){
+			e.players[0].children('ul.hand').children('li').children('a').unbind('click');
 			e.players[0].children('ul.hand').children('li').children('a').bind('click', function() {	            
 	            _this.controller.playTrick($(this).prop('class'));
 	            e.players[0].children('ul.hand').children('li').children('a').unbind('click');
@@ -580,6 +620,7 @@ GameView.prototype = {
 
         // hide proceed button
 		this.elements.proceedButton.hide();	
+		this.enableTrickPlay();
 	},
 	proceedGame:function(args){
 		var e=this.elements;
@@ -621,6 +662,9 @@ GameController.prototype = {
 	},
 	dealCard:function(){
 		this.model.dealCard();
+	},
+	requestRedeal:function(){
+		this.model.requestRedeal();
 	},	
 	playTrick:function(message){
 		this.model.playTrick(message);

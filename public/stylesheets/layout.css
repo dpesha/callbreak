@@ -51,7 +51,7 @@ th {
 #col-left
 {
     margin: 0 auto;
-    width: 80%;
+    width: 70%;
     background: #444;
     float:left;
 }
@@ -63,7 +63,7 @@ th {
 
 #messages {
     width:200px;
-    height:320px;
+    height:365px;
     background:#f9f9f9;
     overflow-y:scroll;   
     word-wrap: break-word;
@@ -71,7 +71,7 @@ th {
 
 #chatroom {
     width:200px;
-    height:320px;
+    height:365px;
     
 }
 
@@ -97,7 +97,7 @@ th {
 }
 
 #player2{
-  float:right;
+  float:left;
   width:300px;
   position:relative;  
 }
@@ -126,9 +126,9 @@ th {
 
 #center{
   float:left;
-  /*width:100%;*/
-  margin-right:-100%;
-  padding-left:25%;  
+  /*width:100%;
+  margin-right:-100%;*/
+  padding-right:5%;  
 }
 
 #mid #round

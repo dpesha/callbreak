@@ -87,6 +87,10 @@ exports.Player = function(name) {
 		exports.gameManager.startNextRound(this.gameId);
 	}
 
+	this.requestRedeal = function(){
+		exports.gameManager.requestRedeal(this.gameId,this);
+	}
+
 };
 
 
@@ -240,6 +244,14 @@ exports.gameManager = {
 
 	startGame: function(gameId) {
 		var game = exports.gameManager.getGame(gameId);
+		game.draw = [];
+		game.bids = [];
+		game.actualScore = [];	
+		game.hand = [];
+		game.turn=[];
+		game.tricks = 0;
+		game.round= 0;
+		game.bids
 		for (var x in game.player) {
 			game.player[x].canStart = false;
 			game.player[x].canDraw = true;
@@ -368,6 +380,24 @@ exports.gameManager = {
 					}
 				}
 			}
+		}
+
+		
+		// place same suit cards together
+		for (var i=0; i<players.length;i++){
+			
+			players[i].cards.sort(function(a,b) {
+
+				var suita=a.getSuitValue();
+				var suitb=b.getSuitValue();			
+
+				if (suita === suitb) {
+				 	var x = a.getValue(),
+				 		y = b.getValue();
+				 	return x < y ? -1 : x > y ? 1 : 0;
+				}
+				return suita - suitb;				
+			});
 		}		
 		
 
@@ -589,6 +619,23 @@ exports.gameManager = {
 			}
 			players[x].canTrick=false;
 		}					
+	},
+	requestRedeal:function(gameId,player){
+		var game = exports.gameManager.getGame(gameId);
+		var players=game.player;
+		game.shownCard={
+			cards:player.cards,
+			player:player.id
+		};
+
+		for (var x in players) {
+			if (players[x].turn === 0) {					
+				players[x].canShuffle = true;
+				players[x].canDeal = true;
+				game.status=exports.Game.STATUS5.replace('{x}',players[x].id);					
+				break;
+			}
+		}
 	},
 
 };
