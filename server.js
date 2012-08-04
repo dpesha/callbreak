@@ -2,6 +2,7 @@ var express = require('express'),
   routes = require('./routes');
 var Cb=require('./callbreak');
 var Card=require('./card');
+var cookie = require('cookie');
 
 var app = module.exports = express.createServer();
 // session setup
@@ -48,10 +49,11 @@ var io = require('socket.io').listen(app);
 io.set('log level', 1);
 
 /***** extract session information *****/
-var parseCookie = require('connect').utils.parseCookie;
+
+//var parseCookie = require('connect').utils.parseSignedCookie;
 io.set('authorization', function(data, accept) {
   if (data.headers.cookie) {
-    data.cookie = parseCookie(data.headers.cookie);
+    data.cookie = cookie.parse(data.headers.cookie);
     data.sessionID = data.cookie['express.sid'];
     // (literally) get the session data from the session store
     store.get(data.sessionID, function(err, session) {
