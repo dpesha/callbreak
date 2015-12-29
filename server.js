@@ -79,7 +79,8 @@ io.set('authorization', function(data, accept) {
 });
 
 io.sockets.on('connection', function(socket) {
-  var sessionId = socket.handshake.session.sessionid;
+  console.log(socket);
+  var sessionId = socket.request.session.sessionid;
   var player=null;
   console.log("New Session Established:" + sessionId);
 
