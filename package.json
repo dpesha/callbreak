@@ -4,7 +4,7 @@
   , "node" : "0.6.12"
   , "private": true
   , "dependencies": {
-      "express": "2.5.8"
+      "express": "4.17.1"
     , "jade": ">= 0.0.1"
     , "socket.io": ">= 0.9.6"
     , "cookie": ">= 0.0.4"
